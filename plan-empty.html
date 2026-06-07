@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Plan — Zillow</title>
+  <link rel="stylesheet" href="../shared/design-system.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; overflow: hidden; }
+    body { font-family: var(--font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    -webkit-font-smoothing: antialiased; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; overflow: hidden; }
     a { color: #000000; text-decoration: underline; }
     a:hover { opacity: 0.7; }
 
@@ -124,12 +126,96 @@
     .not-ready-sub { font-size: 13px; color: #495057; line-height: 1.5; margin-bottom: 10px; }
     .not-ready-cta { display: inline-block; font-size: 13px; font-weight: 700; color: #000000; text-decoration: none; border: 1.5px solid #000000; border-radius: 4px; padding: 7px 14px; }
     .not-ready-cta:hover { background: #F8F9FA; opacity: 1; }
+
+    /* ── CONSTELLATION OVERRIDES ── */
+    /* Object Sans on brand text */
+    .global-nav-wordmark,
+    .price-large, .value-card-amount, .market-index-score,
+    .equity-item strong, .section-heading, .hero-headline,
+    h1, h2, h3 {
+      font-family: "Object Sans", "Inter", sans-serif !important;
+      letter-spacing: -0.01em;
+    }
+    /* Inter on everything else */
+    body, input, button, select, textarea {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    /* Pill buttons */
+    .btn, .btn-black, .btn-sm, .sidebar-cta-btn, .msg-cta,
+    .btn-outline-sm, .search-btn {
+      border-radius: 999px !important;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+    }
+    /* Pill Voyager chips */
+    .suggested-q {
+      border-radius: 999px !important;
+    }
+    /* Rounded-rect icon glyph (not circle) */
+    .icon-glyph {
+      border-radius: 8px !important;
+      width: 32px !important;
+      height: 32px !important;
+    }
+    /* Voyager mode badge as pill */
+    .voyager-panel-mode {
+      border: 1px solid #C8CDD3;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6C757D;
+    }
+    /* Voyager title — Object Sans */
+    .voyager-panel-title {
+      font-family: "Object Sans", "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: #000;
+    }
+    /* AI module head */
+    .ai-blurb-label, .ai-module-head {
+      font-family: "Object Sans", "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+    /* Intent chips — pill */
+    .intent-chip {
+      border-radius: 999px !important;
+    }
+    /* Avatar — pill */
+    .global-nav-avatar {
+      border-radius: 999px !important;
+    }
+    /* Sidebar floating card treatment */
+    .sidebar {
+      border-left: none !important;
+      margin: 16px 16px 16px 0;
+      border: 1px solid #C8CDD3 !important;
+      border-radius: 8px !important;
+      box-shadow: 0 8px 28px rgba(17,17,22,0.10) !important;
+      overflow: hidden;
+    }
+    /* Modal inner — rounded card with gap from viewport edges */
+    .page-body-wrapper {
+      padding: 16px !important;
+      gap: 16px !important;
+    }
+    .modal-drawer-inner {
+      border-radius: 8px !important;
+      border: 1px solid #C8CDD3 !important;
+      box-shadow: 0 8px 28px rgba(17,17,22,0.10) !important;
+    }
   </style>
 </head>
 <body>
 
   <header class="global-nav">
-    <span class="global-nav-wordmark">Zillow</span>
+    <a href="index.html" class="global-nav-wordmark" style="text-decoration:none;">Zillow</a>
     <nav class="global-nav-links">
       <a href="#">Buy</a>
       <a href="#">Rent</a>
@@ -160,32 +246,35 @@
 
   <div class="app-shell">
 
-    <nav class="icon-nav">
-      <a href="index.html" class="icon-nav-item">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
-        <span class="icon-label">Search</span>
-      </a>
-      <a href="#" class="icon-nav-item">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
-        <span class="icon-label">Updates</span>
-      </a>
-      <a href="#" class="icon-nav-item">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
-        <span class="icon-label">Favorites</span>
-      </a>
-      <a href="plan-empty.html" class="icon-nav-item active">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-        <span class="icon-label">Plan</span>
-      </a>
-      <a href="#" class="icon-nav-item">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div>
-        <span class="icon-label">Inbox</span>
-      </a>
-      <a href="reengagement.html" class="icon-nav-item">
-        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><path d="M3.05 11a9 9 0 1 0 .5-3M3 4v4h4"/></svg></div>
-        <span class="icon-label">Recent</span>
-      </a>
-    </nav>
+      <nav class="icon-nav">
+    <a href="index.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><path d="m29.71 28.29-6.55-6.55a12 12 0 1 0-1.41 1.41l6.55 6.55a1 1 0 0 0 1.42 0 1 1 0 0 0-.01-1.41zM14 24a10 10 0 1 1 10-10 10 10 0 0 1-10 10z"></path></svg></div>
+      <span class="icon-label">Search</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><path d="M24.36 12.54A8.53 8.53 0 0 0 17 4.07S17 4 17 4V3a1 1 0 0 0-2 0v1.06a8.29 8.29 0 0 0-7.37 8.19c0 8.23-4.64 6.47-4.64 11v.92A1.84 1.84 0 0 0 4.86 26h7.69a4 4 0 0 0-.05.5 3.5 3.5 0 0 0 7 0 4 4 0 0 0-.05-.5h7.69A1.84 1.84 0 0 0 29 24.17v-.92c0-4.48-4.53-2.81-4.64-10.71Zm-6.86 14a1.5 1.5 0 0 1-3 0 1.64 1.64 0 0 1 .09-.5h2.82a1.64 1.64 0 0 1 .09.46ZM27 24H5v-.75c0-1.06.3-1.34 1.18-2.17 1.82-1.71 3.46-3.67 3.46-8.83A6.31 6.31 0 0 1 16 6h.56a6.57 6.57 0 0 1 5.8 6.54c.07 5.35 2 7.18 3.46 8.52.88.83 1.18 1.11 1.18 2.17Z"></path></svg></div>
+      <span class="icon-label">Updates</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><path d="M27.66 6.19a7.85 7.85 0 0 0-11 .13L16 7l-.65-.66a7.85 7.85 0 0 0-11-.13 8.23 8.23 0 0 0 .09 11.59l.42.42L15.29 28.7a1 1 0 0 0 1.42 0l10.44-10.5.42-.42a8.23 8.23 0 0 0 .09-11.59zm-1.42 10.06-.52.52L16 26.55l-9.72-9.78-.52-.52A6.15 6.15 0 0 1 4 13.19a5.91 5.91 0 0 1 1.62-5.43 5.81 5.81 0 0 1 4.67-1.71 6 6 0 0 1 3.78 1.87l.5.5 1.08 1.08a.5.5 0 0 0 .7 0l1.08-1.08.5-.5a6 6 0 0 1 3.78-1.87 5.81 5.81 0 0 1 4.67 1.71A5.91 5.91 0 0 1 28 13.19a6.15 6.15 0 0 1-1.76 3.06z"></path></svg></div>
+      <span class="icon-label">Favorites</span>
+    </a>
+    <a href="plan-overview.html" class="icon-nav-item active">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><rect width="4" height="4" x="8" y="16" rx=".5"></rect><rect width="4" height="4" x="20" y="16" rx=".5"></rect><rect width="4" height="4" x="14" y="16" rx=".5"></rect><rect width="4" height="4" x="8" y="22" rx=".5"></rect><rect width="4" height="4" x="20" y="22" rx=".5"></rect><rect width="4" height="4" x="14" y="22" rx=".5"></rect><path d="M25 5h-1V3a1 1 0 0 0-2 0v2H10V3a1 1 0 0 0-2 0v2H7a3 3 0 0 0-3 3v19a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3zM7 7h1v2a1 1 0 0 0 2 0V7h12v2a1 1 0 0 0 2 0V7h1a1 1 0 0 1 1 1v4H6V8a1 1 0 0 1 1-1zm18 21H7a1 1 0 0 1-1-1V14h20v13a1 1 0 0 1-1 1z"></path></svg></div>
+      <span class="icon-label">Plan</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><path d="M27 4H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h3v6a1 1 0 0 0 0 .4 1 1 0 0 0 .6.5 1 1 0 0 0 .8 0 1 1 0 0 0 .3-.2l6.7-6.7H27a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm1 15a1 1 0 0 1-1 1H16a1 1 0 0 0-.7.3L10 25.6V22a2 2 0 0 0-2-2H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h22a1 1 0 0 1 1 1z"></path></svg></div>
+      <span class="icon-label">Inbox</span>
+    </a>
+    <a href="reengagement.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;">
+<path d="M16 10C14.9322 9.99995 13.9086 10.4269 13.1573 11.1857C12.406 11.9445 11.9893 12.9722 12 14.04V14.8571C12.0391 16.3189 12.6555 17.7057 13.7143 18.7143L12.5714 18.9657C9.83429 19.6057 8 20.9771 8 22.5714V24.8571C8 25.4883 8.51168 26 9.14286 26H22.8571C23.4883 26 24 25.4883 24 24.8571V22.5714C24 20.9771 22.1429 19.6057 19.4286 18.9657L18.2457 18.7371C19.3038 17.7186 19.9195 16.3252 19.96 14.8571V14.04C19.9707 12.9791 19.5594 11.9575 18.8168 11.1998C18.0741 10.4421 17.0609 10.0106 16 10Z"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M17.2 1.9L27.29 11.4C27.7407 11.7804 28.0005 12.3403 28 12.93V28C28 29.1046 27.1046 30 26 30H6C4.89543 30 4 29.1046 4 28V12.93C3.99952 12.3403 4.25934 11.7804 4.71 11.4L14.8 1.9C15.5111 1.36667 16.4889 1.36667 17.2 1.9ZM6 12.93V28H26V12.93L16 3.52L6 12.93Z"></path>
+</svg></div>
+      <span class="icon-label">Recent</span>
+    </a>
+  </nav>
 
     <div class="page-wrapper">
 

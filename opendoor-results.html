@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Your Cash Offer Estimate — Zillow</title>
+  <link rel="stylesheet" href="../shared/design-system.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; min-height: 100vh; padding-bottom: 40px; }
+    body { font-family: var(--font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    -webkit-font-smoothing: antialiased; background: #F8F9FA; color: #343A40; min-height: 100vh; padding-bottom: 40px; }
     a { color: #000000; text-decoration: underline; }
     a:hover { opacity: 0.7; }
 
@@ -53,6 +55,90 @@
     .voyager-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #000000; border-bottom: 1px solid #DEE2E6; padding-bottom: 8px; margin-bottom: 10px; }
     .voyager-mode { font-size: 11px; color: #ADB5BD; margin-bottom: 10px; }
     .voyager-prompt { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #343A40; margin-bottom: 6px; font-style: italic; }
+
+    /* ── CONSTELLATION OVERRIDES ── */
+    /* Object Sans on brand text */
+    .global-nav-wordmark,
+    .price-large, .value-card-amount, .market-index-score,
+    .equity-item strong, .section-heading, .hero-headline,
+    h1, h2, h3 {
+      font-family: "Object Sans", "Inter", sans-serif !important;
+      letter-spacing: -0.01em;
+    }
+    /* Inter on everything else */
+    body, input, button, select, textarea {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    /* Pill buttons */
+    .btn, .btn-black, .btn-sm, .sidebar-cta-btn, .msg-cta,
+    .btn-outline-sm, .search-btn {
+      border-radius: 999px !important;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+    }
+    /* Pill Voyager chips */
+    .suggested-q {
+      border-radius: 999px !important;
+    }
+    /* Rounded-rect icon glyph (not circle) */
+    .icon-glyph {
+      border-radius: 8px !important;
+      width: 32px !important;
+      height: 32px !important;
+    }
+    /* Voyager mode badge as pill */
+    .voyager-panel-mode {
+      border: 1px solid #C8CDD3;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6C757D;
+    }
+    /* Voyager title — Object Sans */
+    .voyager-panel-title {
+      font-family: "Object Sans", "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: #000;
+    }
+    /* AI module head */
+    .ai-blurb-label, .ai-module-head {
+      font-family: "Object Sans", "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+    /* Intent chips — pill */
+    .intent-chip {
+      border-radius: 999px !important;
+    }
+    /* Avatar — pill */
+    .global-nav-avatar {
+      border-radius: 999px !important;
+    }
+    /* Sidebar floating card treatment */
+    .sidebar {
+      border-left: none !important;
+      margin: 16px 16px 16px 0;
+      border: 1px solid #C8CDD3 !important;
+      border-radius: 8px !important;
+      box-shadow: 0 8px 28px rgba(17,17,22,0.10) !important;
+      overflow: hidden;
+    }
+    /* Modal inner — rounded card with gap from viewport edges */
+    .page-body-wrapper {
+      padding: 16px !important;
+      gap: 16px !important;
+    }
+    .modal-drawer-inner {
+      border-radius: 8px !important;
+      border: 1px solid #C8CDD3 !important;
+      box-shadow: 0 8px 28px rgba(17,17,22,0.10) !important;
+    }
   </style>
 </head>
 <body>
@@ -60,7 +146,7 @@
   <div class="success-banner">&#10003; You've claimed 4821 Maple Ave. Here's what's unlocked.</div>
 
   <header class="global-nav">
-    <span class="global-nav-wordmark">Zillow</span>
+    <a href="index.html" class="global-nav-wordmark" style="text-decoration:none;">Zillow</a>
     <nav class="global-nav-links">
       <a href="#">Buy</a>
       <a href="#">Rent</a>
