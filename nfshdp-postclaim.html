@@ -118,6 +118,14 @@
     .ai-blurb p { font-size: 14px; color: #343A40; line-height: 1.6; }
 
     .selling-options-card { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+
+    /* ── CHAT HISTORY COLLAPSE ── */
+    .chat-history-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; align-self: stretch; }
+    .chat-history-toggle-line { flex: 1; height: 1px; background: #DEE2E6; }
+    .chat-history-toggle-btn { font-size: 11px; font-weight: 600; color: #495057; background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 20px; padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
+    .chat-history-toggle:hover .chat-history-toggle-btn { background: #E9ECEF; color: #343A40; }
+    .chat-history-items { display: none; flex-direction: column; gap: 12px; align-self: stretch; }
+    .chat-history-items.open { display: flex; }
     .selling-options-card .card-title { margin-bottom: 12px; }
 
     .btn { display: inline-block; background: #212529; color: #ffffff; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 4px; text-decoration: none; cursor: pointer; border: none; font-family: inherit; }
@@ -313,7 +321,7 @@
     .hf-field-group.full { grid-template-columns: 1fr; }
     .hf-field { display: flex; flex-direction: column; gap: 5px; }
     .hf-label { font-size: 12px; font-weight: 600; color: #343A40; }
-    .hf-input { padding: 9px 12px; border: 1.5px solid #CED4DA; border-radius: 6px; font-size: 14px; font-family: inherit; color: #000000; background: #ffffff; outline: none; transition: border-color 0.15s; }
+    .hf-input { width: 100%; padding: 9px 12px; border: 1.5px solid #CED4DA; border-radius: 6px; font-size: 14px; font-family: inherit; color: #000000; background: #ffffff; outline: none; transition: border-color 0.15s; box-sizing: border-box; }
     .hf-input:focus { border-color: #000000; }
     .hf-input.updated { border-color: #2a7d4f; background: #f0faf5; animation: fieldPulse 0.5s ease-out; }
     @keyframes fieldPulse { 0% { box-shadow: 0 0 0 0 rgba(42,125,79,0.3); } 100% { box-shadow: 0 0 0 6px rgba(42,125,79,0); } }
@@ -528,10 +536,49 @@
             The cash offer is <strong>$11,000–$34,000 below</strong> your Zestimate. Selling with a Zillow partner agent using Showcase could net you more — especially in this market where homes are selling in under 3 weeks.
           </div>
 
-          <a href="plan-overview.html" class="modal-cta-btn" style="display:block; text-decoration:none;">Move forward with the Plan tab &rarr;</a>
+          <button class="modal-cta-btn" onclick="closeOrComplete()">See my full comparison on this page &rarr;</button>
           <div style="text-align:center; margin-top:10px; font-size:12px; color:#343A40;">Your cash offer estimate will be saved on your home profile.</div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AGENT CONNECT MODAL ── -->
+  <div id="agent-connect-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Connect with Sarah Chen</div>
+          <div class="modal-subtitle">Redfin &nbsp;·&nbsp; 4.8 &#9733; (25) &nbsp;·&nbsp; 12 recent sales</div>
+        </div>
+        <button class="modal-close" onclick="closeAgentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; padding:14px 16px; background:#F8F9FA; border:1px solid #DEE2E6; border-radius:4px;">
+          <div style="width:48px; height:48px; border-radius:50%; background:#DCDEE5; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:#ADB5BD;"></div>
+          <div>
+            <div style="font-size:14px; font-weight:700; color:#000;">Sarah Chen</div>
+            <div style="font-size:12px; color:#495057;">Redfin &nbsp;·&nbsp; 4.8 &#9733; &nbsp;·&nbsp; 4 sales near you</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your name</label>
+          <input type="text" class="hf-input" value="Jasmine W." readonly style="background:#F8F9FA; color:#6C757D;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="text" class="hf-input" value="jasmine@email.com" readonly style="background:#F8F9FA; color:#6C757D;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" class="hf-input" placeholder="(206) 555-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="hf-input" rows="3" style="resize:vertical;" placeholder="Hi Sarah — I'm exploring my selling options at 4821 Maple Ave and would love to connect."></textarea>
+        </div>
+        <button class="modal-cta-btn" onclick="submitAgentConnect()">Send &amp; connect &rarr;</button>
       </div>
     </div>
   </div>
@@ -558,13 +605,6 @@
     <a href="#" class="icon-nav-item">
       <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;"><path d="M27 4H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h3v6a1 1 0 0 0 0 .4 1 1 0 0 0 .6.5 1 1 0 0 0 .8 0 1 1 0 0 0 .3-.2l6.7-6.7H27a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm1 15a1 1 0 0 1-1 1H16a1 1 0 0 0-.7.3L10 25.6V22a2 2 0 0 0-2-2H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h22a1 1 0 0 1 1 1z"></path></svg></div>
       <span class="icon-label">Inbox</span>
-    </a>
-    <a href="reengagement.html" class="icon-nav-item">
-      <div class="icon-glyph"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="display:block;">
-<path d="M16 10C14.9322 9.99995 13.9086 10.4269 13.1573 11.1857C12.406 11.9445 11.9893 12.9722 12 14.04V14.8571C12.0391 16.3189 12.6555 17.7057 13.7143 18.7143L12.5714 18.9657C9.83429 19.6057 8 20.9771 8 22.5714V24.8571C8 25.4883 8.51168 26 9.14286 26H22.8571C23.4883 26 24 25.4883 24 24.8571V22.5714C24 20.9771 22.1429 19.6057 19.4286 18.9657L18.2457 18.7371C19.3038 17.7186 19.9195 16.3252 19.96 14.8571V14.04C19.9707 12.9791 19.5594 11.9575 18.8168 11.1998C18.0741 10.4421 17.0609 10.0106 16 10Z"></path>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M17.2 1.9L27.29 11.4C27.7407 11.7804 28.0005 12.3403 28 12.93V28C28 29.1046 27.1046 30 26 30H6C4.89543 30 4 29.1046 4 28V12.93C3.99952 12.3403 4.25934 11.7804 4.71 11.4L14.8 1.9C15.5111 1.36667 16.4889 1.36667 17.2 1.9ZM6 12.93V28H26V12.93L16 3.52L6 12.93Z"></path>
-</svg></div>
-      <span class="icon-label">Recent</span>
     </a>
   </nav>
 
@@ -594,6 +634,46 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Return visit toggle (subtle, top of content) -->
+      <div id="return-visit-toggle" style="text-align:right; margin-bottom:8px;">
+        <button onclick="toggleReturnVisit()" style="background:none; border:none; font-size:11px; color:#6C757D; text-decoration:underline; cursor:pointer; font-family:inherit; padding:0;">Simulate return visit</button>
+      </div>
+
+      <!-- Since your last visit card (return visit only) -->
+      <div id="since-last-visit-card" style="display:none; background:#D0D2DD; border:1px solid #C8CDD3; border-radius:6px; padding:20px 24px; margin-bottom:20px;">
+        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#212529; margin-bottom:14px; display:flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#212529"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#212529"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#212529"/></svg>
+          Since your last visit &nbsp;·&nbsp; Feb 2026
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">+$24k</div>
+            <div style="font-size:11px; color:#495057; line-height:1.5;">Your Zestimate<br>+4% in 4 months</div>
+          </div>
+          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">12 days</div>
+            <div style="font-size:11px; color:#495057; line-height:1.5;">Median days to pending<br>was 15 days in Feb</div>
+          </div>
+          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">3 sold</div>
+            <div style="font-size:11px; color:#495057; line-height:1.5;">Comparable homes near you<br>2 closed above asking</div>
+          </div>
+        </div>
+        <div style="font-size:13px; color:#212529; line-height:1.6; border-top:1px solid rgba(0,0,0,0.1); padding-top:12px;">
+          The market has moved in your favor since February. If you've been thinking about your options, <strong>now is a good window to explore.</strong>
+        </div>
+      </div>
+
+      <!-- Welcome card (first visit only) -->
+      <div id="welcome-card" style="background:#D0D2DD; border:1px solid #C8CDD3; border-radius:6px; padding:20px 24px; margin-bottom:20px;">
+        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#495057; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#495057"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#495057"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#495057"/></svg>
+          Voyager
+        </div>
+        <div style="font-size:16px; font-weight:700; color:#000; margin-bottom:6px;">This is your home dashboard — let's make it yours.</div>
+        <div style="font-size:13px; color:#495057; line-height:1.6;">Tell Voyager what you'd like to track and I'll build the right view for you. You can always add more later.</div>
       </div>
 
       <!-- Address + specs -->
@@ -669,7 +749,7 @@
       </div>
 
       <!-- Home equity card -->
-      <div class="card" style="margin-bottom: 16px;">
+      <div id="home-equity-card" class="card" style="margin-bottom: 16px; display:none;">
         <div class="private-label"><span class="private-label-eye"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M16 8C8 8 2 16 2 16s6 8 14 8 14-8 14-8-6-8-14-8zm0 13a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm0-8a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/></svg></span> Visible only to you</div>
         <div class="card-title">Your home equity</div>
         <!-- Side-by-side with vertical divider -->
@@ -695,46 +775,35 @@
         </div>
       </div>
 
-      <!-- AI summary blurb -->
-      <div id="ai-summary-module" class="card" style="background: #D0D2DD; border: 1px solid #C8CDD3; margin-bottom: 16px; padding-bottom: 0;">
-        <div class="card-title" style="color:#212529; display:flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#343A40"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#343A40"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#343A40"/></svg>AI Summary</div>
-        <div style="font-size: 13px; color: #212529; line-height: 1.6; margin-bottom: 12px;">Your home has appreciated <strong>8%</strong> in the last 12 months. Seattle inventory is low — homes like yours are selling in under 3 weeks.</div>
+      <!-- Selling options module (flat, no accordion) -->
+      <div id="ai-summary-module" class="card" style="margin-bottom: 16px; display:none;">
+        <div class="card-title">Selling options</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;">
 
-        <!-- Accordion trigger -->
-        <button onclick="toggleSellingOptions()" style="background:none; border:none; border-top: 1px solid #DEE2E6; width:100%; text-align:left; padding: 10px 0 10px 0; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:space-between;">
-          <span style="font-size:13px; font-weight:700; color:#000000;">Explore your selling options</span>
-          <span id="selling-chevron" style="font-size:14px; color:#343A40;">&#8964;</span>
-        </button>
-
-        <!-- Accordion content — hidden by default -->
-        <div id="selling-options-content" style="display:none; padding-bottom: 12px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;">
-
-            <div id="cash-offer-tile" style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:10px 12px;">
-              <div style="font-size:12px; font-weight:700; color:#000; margin-bottom:3px;">Cash offer</div>
-              <div style="font-size:11px; color:#495057; margin-bottom:6px;">Fast, certain, no showings.</div>
-              <a href="#" onclick="openModal(); return false;" style="font-size:12px; font-weight:600; color:#000;">Get estimate &rarr;</a>
-            </div>
-
-            <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:10px 12px;">
-              <div style="font-size:12px; font-weight:700; color:#000; margin-bottom:3px;">Zillow partner agent</div>
-              <div style="font-size:11px; color:#495057; margin-bottom:6px;">Widest buyer reach via Showcase listings.</div>
-              <a href="agent-modal.html" style="font-size:12px; font-weight:600; color:#000;">Get started &rarr;</a>
-            </div>
-
-            <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:10px 12px;">
-              <div style="font-size:12px; font-weight:700; color:#000; margin-bottom:3px;">List with your own agent</div>
-              <div style="font-size:11px; color:#495057; margin-bottom:6px;">Get in front of millions of Zillow buyers.</div>
-              <a href="agent-modal.html" style="font-size:12px; font-weight:600; color:#000;">Learn how &rarr;</a>
-            </div>
-
-            <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:10px 12px;">
-              <div style="font-size:12px; font-weight:700; color:#000; margin-bottom:3px;">Sell it yourself (FSBO)</div>
-              <div style="font-size:11px; color:#495057; margin-bottom:6px;">Full control, no agent commission.</div>
-              <a href="nfshdp-accordion.html" style="font-size:12px; font-weight:600; color:#000;">List your home &rarr;</a>
-            </div>
-
+          <div id="cash-offer-tile" style="background:#F8F9FA; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:4px;">Cash offer</div>
+            <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:8px;">Fast, certain sale. No showings or open houses.</div>
+            <a href="#" onclick="openModal(); return false;" style="font-size:12px; font-weight:600; color:#000;">Get estimate &rarr;</a>
           </div>
+
+          <div style="background:#F8F9FA; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:4px;">Zillow partner agent</div>
+            <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:8px;">Widest buyer reach via Showcase listings.</div>
+            <a href="#" onclick="openAgentModal(); return false;" style="font-size:12px; font-weight:600; color:#000;">Get started &rarr;</a>
+          </div>
+
+          <div style="background:#F8F9FA; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:4px;">List with your own agent</div>
+            <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:8px;">Get in front of millions of Zillow buyers.</div>
+            <a href="#" onclick="openAgentModal(); return false;" style="font-size:12px; font-weight:600; color:#000;">Learn how &rarr;</a>
+          </div>
+
+          <div style="background:#F8F9FA; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px;">
+            <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:4px;">Sell it yourself (FSBO)</div>
+            <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:8px;">Full control, no agent commission.</div>
+            <a href="nfshdp-accordion.html" style="font-size:12px; font-weight:600; color:#000;">List your home &rarr;</a>
+          </div>
+
         </div>
       </div>
 
@@ -763,97 +832,40 @@
       </div>
 
       <!-- Homeowner-specific market stats (carousel) -->
-      <div class="card" style="margin-bottom: 16px; overflow: hidden;">
+      <div id="homeowner-insights-card" class="card" style="margin-bottom: 16px; overflow: hidden; display:none;">
         <div class="private-label"><span class="private-label-eye"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M16 8C8 8 2 16 2 16s6 8 14 8 14-8 14-8-6-8-14-8zm0 13a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm0-8a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/></svg></span> Visible only to you</div>
         <div class="card-title">Your homeowner insights</div>
 
-        <!-- Carousel wrapper -->
-        <div style="position: relative; overflow: hidden;">
-          <div id="insights-slides" style="display: flex; transition: transform 0.3s ease; width: 200%;">
-
-            <!-- SLIDE 1: Market strength → Refinance -->
-            <div style="width: 50%; flex-shrink: 0; padding-right: 4px;">
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;">
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">6.4%</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Current avg. 30-yr mortgage rate</div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">+8.2%</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Appreciation for your home type YoY</div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">$187k</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Your estimated home equity</div>
-                </div>
-              </div>
-              <!-- Embedded Refinance CTA -->
-              <div style="padding-top:12px; display:flex; gap:12px; align-items:flex-start;">
-                <div style="width:36px; height:36px; background:#DEE2E6; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor"><path d="M28 12h-1.02A10.68 10.68 0 0 0 24 8.26V3.5a.5.5 0 0 0-.49-.5h-.01c-1.86.03-5.75.27-7.55 2.79a.49.49 0 0 1-.4.21h-.71a10.9 10.9 0 0 0-10.19 6.95A.9.9 0 0 1 4 12v-.01A1 1 0 1 0 2 12a2.95 2.95 0 0 0 2.14 2.89A9.96 9.96 0 0 0 4 16.46a10.5 10.5 0 0 0 4 8.28V28a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v.5a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.57a9.99 9.99 0 0 0 1.56-1.17 1.02 1.02 0 0 1 .67-.26H28a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm0 10h-2.77a3 3 0 0 0-2.01.78 8.84 8.84 0 0 1-1.27.95l-.95.59V27h-2.05a2.5 2.5 0 0 0-2.45-2h-2a2.5 2.5 0 0 0-2.45 2H10v-3.23l-.76-.6A8.46 8.46 0 0 1 6 16.47 8.7 8.7 0 0 1 14.84 8h.71a2.5 2.5 0 0 0 2.03-1.05c.52-.74 1.71-1.6 4.42-1.87v4.15l.76.6a8.58 8.58 0 0 1 2.41 3.03l.54 1.14H28z"></path><circle cx="22" cy="15" r="1"></circle><path d="M16 11h-3a2.92 2.92 0 0 0-3 2.83V14a1 1 0 0 0 2 0 .91.91 0 0 1 .82-1 .9.9 0 0 1 .18 0h3a1 1 0 0 0 0-2z"></path></svg></div>
-                <div style="flex:1;">
-                  <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">Refinance and save</div>
-                  <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:6px;">With buyer demand high and your home up 8.2% this year, your equity position is strong. Refinancing now could reduce your monthly payments and free up cash.</div>
-                  <a href="#" style="font-size:12px; font-weight:600; color:#000; text-decoration:underline;">See today's rates →</a>
-                </div>
-                <div style="text-align:right; flex-shrink:0;">
-                  <div style="font-size:14px; font-weight:800; color:#000;">$3,240/mo</div>
-                  <div style="font-size:11px; color:#6C757D;">Est. payment</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SLIDE 2: Rental market → List for rent -->
-            <div style="width: 50%; flex-shrink: 0; padding-left: 4px;">
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;">
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">$2,100</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Rent Zestimate® for your home</div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">4.2%</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Rental yield for your home type in 98103</div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
-                  <div style="font-size:18px; font-weight:800; color:#000;">Low</div>
-                  <div style="font-size:11px; color:#343A40; line-height:1.3;">Rental vacancy rate in your area</div>
-                </div>
-              </div>
-              <!-- Embedded Rental CTA -->
-              <div style="padding-top:12px; display:flex; gap:12px; align-items:flex-start;">
-                <div style="width:36px; height:36px; background:#DEE2E6; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px;">🏠</div>
-                <div style="flex:1;">
-                  <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">List your home for rent</div>
-                  <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:6px;">Rental demand is high in your area. Find your next renter with Zillow Rental Manager and screen tenants online — for free.</div>
-                  <a href="#" style="font-size:12px; font-weight:600; color:#000; text-decoration:underline;">Learn more →</a>
-                </div>
-                <div style="text-align:right; flex-shrink:0;">
-                  <div style="font-size:14px; font-weight:800; color:#000;">$2,100/mo</div>
-                  <div style="font-size:11px; color:#6C757D;">Rent Zestimate®</div>
-                </div>
-              </div>
-            </div>
-
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;">
+          <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+            <div style="font-size:18px; font-weight:800; color:#000;">6.4%</div>
+            <div style="font-size:11px; color:#343A40; line-height:1.3;">Current avg. 30-yr mortgage rate</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+            <div style="font-size:18px; font-weight:800; color:#000;">+8.2%</div>
+            <div style="font-size:11px; color:#343A40; line-height:1.3;">Appreciation for your home type YoY</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+            <div style="font-size:18px; font-weight:800; color:#000;">$211k</div>
+            <div style="font-size:11px; color:#343A40; line-height:1.3;">Your estimated home equity</div>
           </div>
         </div>
-
-        <!-- Pagination dots -->
-        <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; padding-top:10px; border-top:1px solid #DEE2E6;">
-          <button id="dot-1" onclick="goToSlide(0)" style="width:8px; height:8px; border-radius:50%; background:#000000; border:none; cursor:pointer; padding:0;"></button>
-          <button id="dot-2" onclick="goToSlide(1)" style="width:8px; height:8px; border-radius:50%; background:#CED4DA; border:none; cursor:pointer; padding:0;"></button>
+        <div style="padding-top:12px; display:flex; gap:12px; align-items:flex-start;">
+          <div style="width:36px; height:36px; background:#DEE2E6; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="18" height="18" fill="currentColor"><path d="M28 12h-1.02A10.68 10.68 0 0 0 24 8.26V3.5a.5.5 0 0 0-.49-.5h-.01c-1.86.03-5.75.27-7.55 2.79a.49.49 0 0 1-.4.21h-.71a10.9 10.9 0 0 0-10.19 6.95A.9.9 0 0 1 4 12v-.01A1 1 0 1 0 2 12a2.95 2.95 0 0 0 2.14 2.89A9.96 9.96 0 0 0 4 16.46a10.5 10.5 0 0 0 4 8.28V28a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v.5a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.57a9.99 9.99 0 0 0 1.56-1.17 1.02 1.02 0 0 1 .67-.26H28a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm0 10h-2.77a3 3 0 0 0-2.01.78 8.84 8.84 0 0 1-1.27.95l-.95.59V27h-2.05a2.5 2.5 0 0 0-2.45-2h-2a2.5 2.5 0 0 0-2.45 2H10v-3.23l-.76-.6A8.46 8.46 0 0 1 6 16.47 8.7 8.7 0 0 1 14.84 8h.71a2.5 2.5 0 0 0 2.03-1.05c.52-.74 1.71-1.6 4.42-1.87v4.15l.76.6a8.58 8.58 0 0 1 2.41 3.03l.54 1.14H28z"></path><circle cx="22" cy="15" r="1"></circle><path d="M16 11h-3a2.92 2.92 0 0 0-3 2.83V14a1 1 0 0 0 2 0 .91.91 0 0 1 .82-1 .9.9 0 0 1 .18 0h3a1 1 0 0 0 0-2z"></path></svg></div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">Refinance and save</div>
+            <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:6px;">With your home up 8.2% this year, your equity position is strong. Refinancing now could reduce your monthly payments and free up cash.</div>
+            <a href="plan-overview.html" style="font-size:12px; font-weight:600; color:#000; text-decoration:underline;">See today's rates on the Plan tab →</a>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:14px; font-weight:800; color:#000;">$3,240/mo</div>
+            <div style="font-size:11px; color:#6C757D;">Est. payment</div>
+          </div>
         </div>
       </div>
 
-      <script>
-      function goToSlide(index) {
-        var slides = document.getElementById('insights-slides');
-        slides.style.transform = 'translateX(-' + (index * 50) + '%)';
-        document.getElementById('dot-1').style.background = index === 0 ? '#000000' : '#CED4DA';
-        document.getElementById('dot-2').style.background = index === 1 ? '#000000' : '#CED4DA';
-      }
-      </script>
-
       <!-- Section A: Market insights -->
-      <div class="market-insights-section">
+      <div id="market-insights-section" class="market-insights-section" style="display:none;">
         <div class="section-heading">Market insights for 98103</div>
         <div class="market-grid">
           <div class="market-index-card">
@@ -890,7 +902,7 @@
       </div>
 
       <!-- Section B: Listing agent matches -->
-      <div class="agent-matches-section">
+      <div id="agent-matches-section" class="agent-matches-section" style="display:none;">
         <div class="section-heading-row">
           <div class="section-heading" style="margin-bottom:0;">Listing agent matches for 98103</div>
           <span class="section-nav">&lt; &gt;</span>
@@ -908,7 +920,7 @@
                 4 sales near you
               </div>
               <div class="agent-card-connect">
-                <a href="agent-modal.html" class="btn-outline-sm">Connect</a>
+                <a href="#" onclick="openAgentModal(); return false;" class="btn-outline-sm">Connect</a>
               </div>
             </div>
           </div>
@@ -923,7 +935,7 @@
                 3 sales near you
               </div>
               <div class="agent-card-connect">
-                <a href="agent-modal.html" class="btn-outline-sm">Connect</a>
+                <a href="#" onclick="openAgentModal(); return false;" class="btn-outline-sm">Connect</a>
               </div>
             </div>
           </div>
@@ -931,7 +943,7 @@
       </div>
 
       <!-- Section C: Comparable homes -->
-      <div class="comps-section">
+      <div id="comps-section" class="comps-section" style="display:none;">
         <div class="section-heading-row">
           <div class="section-heading" style="margin-bottom:0;">Comparable homes</div>
           <span class="section-nav">&lt; &gt;</span>
@@ -982,6 +994,16 @@
       </div>
 
 
+      <!-- Other helpful tools (shown after onboarding, lists unselected modules) -->
+      <div id="helpful-tools-card" class="card" style="display:none; margin-bottom:16px;">
+        <div class="private-label" style="margin-bottom:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#343A40"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#343A40"/></svg>
+          Other helpful tools
+        </div>
+        <div style="font-size:12px; color:#6C757D; margin-bottom:12px;">You can add any of these to your dashboard anytime — just ask Voyager or tap below.</div>
+        <div id="helpful-tools-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
     </main>
       </div><!-- end modal-drawer-inner -->
     </div><!-- end modal-drawer -->
@@ -992,53 +1014,44 @@
 
         <div class="voyager-panel-header">
           <span class="voyager-panel-title">Your Home Advisor</span>
-          <span id="voyager-panel-mode" class="voyager-panel-mode">Contextualizer mode</span>
+          <span id="voyager-panel-mode" class="voyager-panel-mode">Onboarding mode</span>
         </div>
 
         <!-- Scrolling conversation area -->
         <div id="voyager-messages" class="voyager-messages">
 
-          <!-- STATE 1: Opening intro bubble -->
-          <div id="msg-opening" class="msg-voyager">
-            Hi Jasmine — I'm your Home Advisor. I'm here to help you understand your home's value, answer questions as you go, and guide you when you're ready to take next steps.<br><br>
-            For deeper planning — comparing selling options, building a timeline, connecting with an agent — that all lives in the <strong>Plan tab</strong>. I'll point you there when the time is right.<br><br>
-            Your current Zestimate is <strong>$612,000</strong>. To make sure that's as accurate as possible, here are a few things to set up:
-          </div>
-
-          <!-- Get started checklist card — separate from bubble -->
-          <div id="msg-checklist" style="background:#ffffff; border:1px solid #C8CDD3; border-radius:8px; overflow:hidden; align-self:stretch; margin: 0 2px;">
-            <div style="padding:10px 14px 8px; display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:13px; font-weight:700; color:#000;">Get started</span>
-              <span style="font-size:12px; color:#6C757D;">0/4 &#8964;</span>
-            </div>
-            <!-- Progress bar — empty state -->
-            <div style="padding:0 14px 10px; display:flex; gap:4px;">
-              <div style="flex:1; height:4px; background:#DEE2E6; border-radius:2px;"></div>
-              <div style="flex:1; height:4px; background:#DEE2E6; border-radius:2px;"></div>
-              <div style="flex:1; height:4px; background:#DEE2E6; border-radius:2px;"></div>
-              <div style="flex:1; height:4px; background:#DEE2E6; border-radius:2px;"></div>
-            </div>
-            <div class="checklist">
-              <div class="checklist-item"><div class="checklist-circle"></div> Review and update your home facts</div>
-              <div class="checklist-item"><div class="checklist-circle"></div> Confirm square footage &amp; bedrooms</div>
-              <div class="checklist-item"><div class="checklist-circle"></div> Add any recent renovations or upgrades</div>
-              <div class="checklist-item"><div class="checklist-circle"></div> Check your photos are up to date</div>
+          <!-- ONBOARDING: Opening welcome bubble -->
+          <div id="msg-onboarding-welcome" class="msg-voyager">
+            Welcome — this is your owner view of 4821 Maple Ave. I'm here to help you build a dashboard that works for you.<br><br>
+            What brings you here today?
+            <!-- Three bucket intent chips -->
+            <div class="intent-chips" id="onboarding-bucket-chips">
+              <button class="intent-chip" onclick="selectBucket('track')">Track my home's value</button>
+              <button class="intent-chip" onclick="selectBucket('equity')">Understand my equity</button>
+              <button class="intent-chip" onclick="selectBucket('sell')">Explore selling options</button>
             </div>
           </div>
 
-          <!-- STATE 2: Intent responses (hidden by default) -->
-          <div id="msg-user-intent" class="msg-user" style="display:none;"></div>
-          <div id="msg-response" class="msg-voyager" style="display:none;"></div>
+          <!-- RETURN VISIT: Context-rich return bubble (hidden by default) -->
+          <div id="msg-return-welcome" class="msg-voyager" style="display:none;">
+            A few things have changed since February. Your home is up <strong>$24k</strong>, and the market is moving faster — median days to pending dropped from 15 to 12. Two comparable homes near you just closed above asking.<br><br>
+            Your equity position is now around <strong>~$211k</strong>. If selling has been in the back of your mind, your timing is strong right now.
+            <div class="intent-chips" id="return-intent-chips" style="margin-top:10px;">
+              <button class="intent-chip" onclick="returnIntent('sell')">Am I in a good position to sell?</button>
+              <button class="intent-chip" onclick="returnIntent('market')">What changed in the market?</button>
+              <button class="intent-chip" onclick="returnIntent('save')">Thinking about ways to save on my home</button>
+              <button class="intent-chip" onclick="returnIntent('watch')">Just keeping an eye on things</button>
+            </div>
+          </div>
 
+          <!-- Dynamic conversation thread appended here by JS -->
 
         </div>
 
         <!-- Pinned bottom: suggestions + input — always visible -->
         <div class="voyager-bottom">
           <div id="voyager-suggestions" class="voyager-suggestions">
-            <button class="suggested-q" onclick="typeQuestion(this)">"How is my Zestimate calculated?"</button>
-            <button class="suggested-q" onclick="typeQuestion(this)">"What does my equity mean?"</button>
-            <button class="suggested-q" onclick="typeQuestion(this)">"Is now a good time to sell?"</button>
+            <!-- Suggestions populated by JS after onboarding completes -->
           </div>
           <div class="voyager-input-row">
             <div class="voyager-input-wrap">
@@ -1068,23 +1081,8 @@
     }
   });
 
-  // ── ACCORDION ──
-  function toggleSellingOptions() {
-    var content = document.getElementById('selling-options-content');
-    var chevron = document.getElementById('selling-chevron');
-    if (content.style.display === 'none') {
-      content.style.display = 'block';
-      chevron.innerHTML = '&#8963;';
-    } else {
-      content.style.display = 'none';
-      chevron.innerHTML = '&#8964;';
-    }
-  }
-
   // ── MODAL ──
   function openModal() {
-    document.getElementById('selling-options-content').style.display = 'block';
-    document.getElementById('selling-chevron').innerHTML = '&#8963;';
     document.getElementById('modal-step-1').classList.add('active');
     document.getElementById('modal-step-2').classList.remove('active');
     document.getElementById('cash-offer-modal').classList.add('open');
@@ -1113,12 +1111,14 @@
   // ── POST FLOW STATE ──
   function applyPostFlowState() {
     sessionStorage.setItem('cashOfferComplete', '1');
-    // Reveal comparison module, hide cash offer entry points
+    // Reveal comparison module, replace cash offer tile CTA with "Requested" state
     document.getElementById('cash-offer-module').style.display = 'block';
-    document.getElementById('cash-offer-tile').style.display = 'none';
-    // Keep accordion expanded
-    document.getElementById('selling-options-content').style.display = 'block';
-    document.getElementById('selling-chevron').innerHTML = '&#8963;';
+    var tile = document.getElementById('cash-offer-tile');
+    if (tile) {
+      var tileLink = tile.querySelector('a');
+      if (tileLink) tileLink.outerHTML = '<div style="display:inline-flex; align-items:center; gap:5px; margin-top:2px;"><span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:#212529; color:#fff; padding:2px 7px; border-radius:999px;">Requested</span><span style="font-size:11px; color:#6C757D;">Estimate saved</span></div>';
+      tile.style.opacity = '0.75';
+    }
     // Switch Voyager to Navigator state
     document.getElementById('voyager-panel-mode').textContent = 'Navigator mode';
     // Append navigator message at the bottom of the chat thread
@@ -1136,6 +1136,46 @@
     scrollMessages();
     // Scroll page to comparison module
     document.getElementById('cash-offer-module').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function openAgentModal() {
+    document.getElementById('agent-connect-modal').classList.add('open');
+  }
+
+  function closeAgentModal() {
+    document.getElementById('agent-connect-modal').classList.remove('open');
+  }
+
+  document.getElementById('agent-connect-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAgentModal();
+  });
+
+  function submitAgentConnect() {
+    closeAgentModal();
+
+    document.getElementById('agent-matches-section').style.display = '';
+
+    var agentCards = document.querySelectorAll('.agent-card-main');
+    agentCards.forEach(function(card) {
+      var nameEl = card.querySelector('.agent-card-name');
+      if (nameEl && nameEl.textContent.trim() === 'Sarah Chen') {
+        var connectEl = card.querySelector('.agent-card-connect');
+        if (connectEl) {
+          connectEl.innerHTML = '<div style="display:inline-flex; align-items:center; gap:6px; margin-top:6px;"><span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:#212529; color:#fff; padding:3px 9px; border-radius:999px;">Connected</span><span style="font-size:11px; color:#6C757D;">Message sent</span></div>';
+        }
+        card.style.borderColor = '#212529';
+      }
+    });
+
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'You\'re connected with <strong>Sarah Chen</strong>. She\'ll reach out within 24 hours to discuss your home and goals.<br><br>When you\'re ready to go deeper — compare your selling options, build a timeline, and track your next steps — the Plan tab is set up for that.<a href="plan-overview.html" class="msg-cta">Go to your Plan tab when you\'re ready &rarr;</a>');
+      setSuggestions([
+        '"What should I ask Sarah when she reaches out?"',
+        '"What selling options should I compare?"',
+        { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+      ]);
+    }, 1000);
   }
 
   function setSuggestions(qs) {
@@ -1164,7 +1204,919 @@
     });
   }
 
-  // ── VOYAGER INTENT CHIPS ──
+  // ── RETURN VISIT TOGGLE ──
+  var isReturnVisit = false;
+
+  function activateReturnVisit() {
+    var welcomeCard = document.getElementById('welcome-card');
+    var sinceCard = document.getElementById('since-last-visit-card');
+    var onboardingWelcome = document.getElementById('msg-onboarding-welcome');
+    var returnWelcome = document.getElementById('msg-return-welcome');
+    var toggleBtn = document.querySelector('#return-visit-toggle button');
+
+    isReturnVisit = true;
+    welcomeCard.style.display = 'none';
+    sinceCard.style.display = '';
+    document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+    if (toggleBtn) toggleBtn.textContent = 'Simulate first visit';
+
+    // Collapse any existing conversation into history before showing return welcome
+    var msgs = document.getElementById('voyager-messages');
+    var existingMsgs = Array.prototype.slice.call(msgs.children).filter(function(el) {
+      return el.id !== 'msg-return-welcome' && !el.classList.contains('chat-history-toggle') && el.id !== 'chat-history-items';
+    });
+    if (existingMsgs.length > 0) {
+      var count = existingMsgs.length;
+      // Wrap in collapsed history block
+      var toggleEl = document.createElement('div');
+      toggleEl.className = 'chat-history-toggle';
+      toggleEl.setAttribute('onclick', 'toggleChatHistory(this)');
+      toggleEl.innerHTML = '<div class="chat-history-toggle-line"></div><div class="chat-history-toggle-btn">&#8679; ' + count + ' previous message' + (count !== 1 ? 's' : '') + '</div><div class="chat-history-toggle-line"></div>';
+
+      var historyEl = document.createElement('div');
+      historyEl.className = 'chat-history-items';
+      historyEl.id = 'chat-history-items';
+      existingMsgs.forEach(function(el) {
+        historyEl.appendChild(el);
+      });
+
+      msgs.insertBefore(toggleEl, msgs.firstChild);
+      msgs.insertBefore(historyEl, toggleEl.nextSibling);
+    } else {
+      onboardingWelcome.style.display = 'none';
+    }
+
+    returnWelcome.style.display = '';
+    msgs.appendChild(returnWelcome);
+
+    setSuggestions([
+      '"What would I net if I sold today?"',
+      '"How does my equity compare to similar homes?"',
+      '"What are my selling options?"'
+    ]);
+    scrollMessages();
+  }
+
+  function toggleReturnVisit() {
+    if (!isReturnVisit) {
+      sessionStorage.setItem('returnVisitMode', '1');
+      activateReturnVisit();
+    } else {
+      // Reset to first visit
+      isReturnVisit = false;
+      sessionStorage.removeItem('returnVisitMode');
+      location.reload();
+    }
+  }
+
+  function toggleChatHistory(toggleEl) {
+    var historyEl = document.getElementById('chat-history-items');
+    var btn = toggleEl.querySelector('.chat-history-toggle-btn');
+    var isOpen = historyEl.classList.contains('open');
+    historyEl.classList.toggle('open');
+    btn.innerHTML = isOpen ? '&#8679; Show conversation history' : '&#8681; Hide history';
+  }
+
+  // ── RETURN VISIT INTENT FLOW ──
+  var sellExploreModules = {
+    sell_only: {
+      modules: [
+        { num: 1, label: 'Selling options', id: 'ai-summary-module' },
+        { num: 2, label: 'Market insights', id: 'market-insights-section' }
+      ],
+      helpfulTools: [
+        { label: 'Listing agent matches', id: 'agent-matches-section' },
+        { label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ]
+    },
+    buy_sell: {
+      modules: [
+        { num: 1, label: 'Selling options', id: 'ai-summary-module' },
+        { num: 2, label: 'Market insights', id: 'market-insights-section' },
+        { num: 3, label: 'Listing agent matches', id: 'agent-matches-section' }
+      ],
+      helpfulTools: [
+        { label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ]
+    },
+    rent: {
+      modules: [
+        { num: 1, label: 'Homeowner insights', id: 'homeowner-insights-card' },
+        { num: 2, label: 'Market insights', id: 'market-insights-section' }
+      ],
+      helpfulTools: [
+        { label: 'Selling options', id: 'ai-summary-module' },
+        { label: 'Listing agent matches', id: 'agent-matches-section' }
+      ]
+    }
+  };
+
+  function returnIntent(intent) {
+    // Hide the return chips
+    var chips = document.getElementById('return-intent-chips');
+    if (chips) chips.style.display = 'none';
+
+    var msgs = document.getElementById('voyager-messages');
+
+    if (intent === 'sell') {
+      appendMsg('msg-user', 'Am I in a good position to sell?');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Based on what\'s happened in your market since February, yes — your position is solid right now.<br><br>Your home is up <strong>$24k</strong>. Two comparable homes just closed above asking. Demand is tightening — days to pending dropped from 15 to 12.<br><br>Before we go further: are you thinking about selling only, buying and selling at the same time, or have you considered renting it out?<div class="intent-chips" id="sell-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="selectSellPath(\'sell_only\')">Selling only</button><button class="intent-chip" onclick="selectSellPath(\'buy_sell\')">Buy and sell</button><button class="intent-chip" onclick="selectSellPath(\'rent\')">Rent it out instead</button></div>');
+      }, 900);
+    } else if (intent === 'market') {
+      appendMsg('msg-user', 'What changed in the market?');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Here\'s what shifted in 98103 since your last visit:<br><br>· Days to pending: <strong>15 → 12 days</strong><br>· 3 comps sold — 2 above asking<br>· Your Zestimate: <strong>+$24k (+4%)</strong><br>· 30-yr mortgage rate: still at 6.4%<br><br>The overall market index moved from neutral (51) toward seller-favorable. If selling has been in the back of your mind, this is a meaningful shift.<div class="intent-chips" style="margin-top:10px;"><button class="intent-chip" onclick="returnIntent(\'sell\')">Am I in a good position to sell?</button><button class="intent-chip" onclick="returnIntent(\'watch\')">Just watching for now</button></div>');
+        setSuggestions(['"What would I net if I sold today?"', '"How does my equity compare to similar homes?"', '"What are my selling options?"']);
+      }, 900);
+    } else if (intent === 'save') {
+      appendMsg('msg-user', 'Thinking about ways to save on my home');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'A few angles worth looking at based on your situation:<br><br>· <strong>Refinancing:</strong> current 30-yr rate is 6.4%. If your existing rate is higher, there may be savings here — your equity at ~$211k gives you strong leverage.<br>· <strong>Insurance review:</strong> your home has appreciated 4% since February, which can mean you\'re over- or under-insured. Adjusting could save you money.<br>· <strong>Equity access:</strong> you could tap equity for improvements that pay back in value.<br><br>Which of these sounds most relevant?<div class="intent-chips" id="save-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="triggerRefiFromChip()">Refinancing</button><button class="intent-chip" onclick="selectSavePath(\'insurance\')">Insurance review</button><button class="intent-chip" onclick="selectSavePath(\'equity\')">Using my equity</button></div>');
+        setSuggestions(['"At what rate would refinancing save me money?"', '"How does my equity affect my options?"', '"What home improvements add the most value?"']);
+      }, 900);
+    } else if (intent === 'watch') {
+      appendMsg('msg-user', 'Just keeping an eye on things');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Understood. Your dashboard is up to date — your Zestimate is at $636k and your equity is around $211k.<br><br>I\'ll be here when something changes or you\'re ready to explore your options. In the meantime, your comps and equity modules are already on your page.');
+        setSuggestions(['"What would I net if I sold today?"', '"How is my Zestimate calculated?"', '"What does my equity mean?"']);
+      }, 900);
+    }
+  }
+
+  // Save path module data
+  var savePathModules = {
+    refi: {
+      modules: [
+        { num: 1, label: 'Home equity', id: 'home-equity-card' },
+        { num: 2, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ],
+      helpfulTools: [
+        { label: 'Market insights', id: 'market-insights-section' },
+        { label: 'Comparable homes', id: 'comps-section' }
+      ],
+      voyagerNote: 'Your equity card shows your current position and estimated net proceeds. The homeowner insights module has the rate and refinance data you\'ll want — slide 1 breaks it down.'
+    },
+    insurance: {
+      modules: [
+        { num: 1, label: 'Home equity', id: 'home-equity-card' },
+        { num: 2, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ],
+      helpfulTools: [
+        { label: 'Market insights', id: 'market-insights-section' },
+        { label: 'Comparable homes', id: 'comps-section' }
+      ],
+      voyagerNote: 'Your equity and current value are in the home equity card. The homeowner insights module gives you the appreciation data you\'ll need when talking to your insurer.'
+    },
+    equity: {
+      modules: [
+        { num: 1, label: 'Home equity', id: 'home-equity-card' },
+        { num: 2, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ],
+      helpfulTools: [
+        { label: 'Selling options', id: 'ai-summary-module' },
+        { label: 'Market insights', id: 'market-insights-section' }
+      ],
+      voyagerNote: 'The equity card shows your estimated position — $211k — and what you\'d net if you sold today. Homeowner insights shows how your equity has grown and where rates are right now.'
+    }
+  };
+
+  var savePathLabels = { refi: 'Refinancing', insurance: 'Insurance review', equity: 'Using my equity' };
+
+  // Refi-specific path (triggered from free-text refinance intent)
+  var refiPathData = {
+    both: {
+      modules: [
+        { num: 1, label: 'Homeowner insights', id: 'homeowner-insights-card' },
+        { num: 2, label: 'Home equity', id: 'home-equity-card' }
+      ],
+      helpfulTools: [],
+      confirmNote: 'The homeowner insights module has the rate and equity data you\'ll want — slide 1 breaks it down. When you\'re ready to go further, the Plan tab is where you can model your options and start planning your next move.<a href="plan-overview.html" class="msg-cta" style="margin-top:10px;">Start planning on the Plan tab &rarr;</a>'
+    },
+    refi_only: {
+      modules: [
+        { num: 1, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+      ],
+      helpfulTools: [
+        { label: 'Home equity', id: 'home-equity-card' }
+      ],
+      confirmNote: 'The homeowner insights module has the rate and equity data you\'ll want — slide 1 shows your current rate environment and how your equity factors in. I\'ve added a few related tools at the bottom whenever you want to explore further. When you\'re ready to go deeper, the Plan tab is where you can model your options and start planning your refinance.<a href="plan-overview.html" class="msg-cta" style="margin-top:10px;">Start planning on the Plan tab &rarr;</a>'
+    }
+  };
+
+  function selectRefiPath(choice) {
+    window._pendingModuleContext = null;
+    var chips = document.getElementById('refi-path-chips');
+    if (chips) chips.style.display = 'none';
+
+    var pathData = refiPathData[choice];
+    var msgs = document.getElementById('voyager-messages');
+    var choiceLabel = choice === 'both' ? 'Both' : 'Just refinancing';
+    appendMsg('msg-user', choiceLabel);
+
+    showTypingThenReply(msgs, function() {
+      // Reveal modules
+      var addedLabels = [];
+      pathData.modules.forEach(function(m) {
+        var el = document.getElementById(m.id);
+        if (el) el.style.display = '';
+        addedLabels.push(m.label);
+      });
+
+      // Populate helpful tools if any
+      var toolsList = document.getElementById('helpful-tools-list');
+      toolsList.innerHTML = '';
+      if (pathData.helpfulTools.length > 0) {
+        pathData.helpfulTools.forEach(function(tool) {
+          var chip = document.createElement('button');
+          chip.style.cssText = 'background:#ffffff; border:1.5px solid #C8CDD3; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:#212529; cursor:pointer; text-align:left; font-family:inherit; display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;';
+          chip.innerHTML = '<span>' + tool.label + '</span><span style="font-size:11px; color:#6C757D; font-weight:500;">+ Add</span>';
+          chip.onclick = (function(t, btn) {
+            return function() {
+              var pageEl = document.getElementById(t.id);
+              if (pageEl) pageEl.style.display = '';
+              btn.innerHTML = '<span>' + t.label + '</span><span style="font-size:11px; color:#2a7d4f; font-weight:600;">&#10003; Added</span>';
+              btn.style.opacity = '0.6';
+              btn.disabled = true;
+              appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + t.label + '</strong> to your dashboard.');
+              scrollMessages();
+              if (pageEl) {
+                var mainCol = document.querySelector('.main-col');
+                var elTop = pageEl.getBoundingClientRect().top;
+                var mainTop = mainCol.getBoundingClientRect().top;
+                mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+              }
+            };
+          })(tool, chip);
+          toolsList.appendChild(chip);
+        });
+        document.getElementById('helpful-tools-card').style.display = '';
+      }
+
+      var addedStr = addedLabels.join(' and ');
+      var toolsNote = pathData.helpfulTools.length > 0 ? ' I\'ve also added a few related tools at the bottom of your dashboard if you want to dig further.' : '';
+      appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + addedStr + '</strong> to your dashboard.' + toolsNote + '<br><br>' + pathData.confirmNote);
+      setSuggestions([
+        '"At what rate would refinancing save me money?"',
+        '"How does my equity affect my options?"',
+        '"What\'s the break-even point on a refi?"'
+      ]);
+
+      // Scroll to first module
+      var firstEl = document.getElementById(pathData.modules[0].id);
+      if (firstEl) {
+        var mainCol = document.querySelector('.main-col');
+        var elTop = firstEl.getBoundingClientRect().top;
+        var mainTop = mainCol.getBoundingClientRect().top;
+        mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+      }
+    }, 700);
+  }
+
+  function triggerRefiFromChip() {
+    // Hide whichever save-path chip container is visible
+    ['save-path-chips','save-path-chips-2'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', 'Refinancing');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Worth looking at. Here\'s where things stand:<br><br>Current 30-yr rate is <strong>6.4%</strong>. Your equity is around <strong>~$211k</strong> — strong leverage for a refi. And your home\'s 4% appreciation since February works in your favor on the appraisal.<br><br>One other thing: your home value going up can mean your insurance coverage is underpriced right now — a review there could save you money too. Want me to add modules for both, or just refinancing?<div class="intent-chips" id="refi-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="selectRefiPath(\'both\')">Both</button><button class="intent-chip" onclick="selectRefiPath(\'refi_only\')">Just refinancing</button></div>');
+    }, 800);
+  }
+
+  function selectSavePath(path) {
+    var pathChips = document.getElementById('save-path-chips');
+    if (pathChips) pathChips.style.display = 'none';
+
+    var pathData = savePathModules[path];
+    var msgs = document.getElementById('voyager-messages');
+
+    appendMsg('msg-user', savePathLabels[path]);
+
+    showTypingThenReply(msgs, function() {
+      var available = filterAlreadyVisible(pathData.modules);
+      if (available.length === 0) {
+        appendMsg('msg-voyager', 'You already have all the relevant modules on your dashboard. Is there anything else I can help you with?');
+        return;
+      }
+      var moduleText = 'Here are the modules I\'d add:<br><br>';
+      available.forEach(function(m) { moduleText += m.num + '. ' + m.label + '<br>'; });
+      moduleText += '<br>Which would you like?';
+
+      var allNums = available.map(function(m) { return m.num; });
+      var chips = '<div class="intent-chips" id="save-module-chips" style="margin-top:10px;">';
+      if (available.length > 1) chips += '<button class="intent-chip" onclick="addSaveModules(\'' + path + '\',[' + allNums.join(',') + '])">Add both</button>';
+      available.forEach(function(m) {
+        chips += '<button class="intent-chip" onclick="addSaveModules(\'' + path + '\',[' + m.num + '])">Add ' + m.num + (available.length > 1 ? ' only' : '') + '</button>';
+      });
+      chips += '</div>';
+
+      window._pendingModuleContext = { type: 'save', path: path };
+      window._savePathModulesFiltered = available;
+      appendMsg('msg-voyager', moduleText + chips);
+    }, 800);
+  }
+
+  function addSaveModules(path, selectedNums) {
+    window._pendingModuleContext = null;
+    var pathChips = document.getElementById('save-module-chips');
+    if (pathChips) pathChips.style.display = 'none';
+
+    var pathData = savePathModules[path];
+    var filteredModules = window._savePathModulesFiltered || pathData.modules;
+    var addedLabels = [];
+
+    filteredModules.forEach(function(m) {
+      if (selectedNums.indexOf(m.num) !== -1) {
+        var el = document.getElementById(m.id);
+        if (el) el.style.display = '';
+        addedLabels.push(m.label);
+      }
+    });
+
+    // Populate helpful tools with savings-relevant unselected tools
+    var toolsList = document.getElementById('helpful-tools-list');
+    toolsList.innerHTML = '';
+    var toolsToShow = pathData.helpfulTools.slice();
+    filteredModules.forEach(function(m) {
+      if (selectedNums.indexOf(m.num) === -1) toolsToShow.push({ label: m.label, id: m.id });
+    });
+
+    if (toolsToShow.length > 0) {
+      toolsToShow.forEach(function(tool) {
+        var chip = document.createElement('button');
+        chip.style.cssText = 'background:#ffffff; border:1.5px solid #C8CDD3; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:#212529; cursor:pointer; text-align:left; font-family:inherit; display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;';
+        chip.innerHTML = '<span>' + tool.label + '</span><span style="font-size:11px; color:#6C757D; font-weight:500;">+ Add</span>';
+        chip.onclick = (function(t, btn) {
+          return function() {
+            var pageEl = document.getElementById(t.id);
+            if (pageEl) pageEl.style.display = '';
+            btn.innerHTML = '<span>' + t.label + '</span><span style="font-size:11px; color:#2a7d4f; font-weight:600;">&#10003; Added</span>';
+            btn.style.opacity = '0.6';
+            btn.disabled = true;
+            appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + t.label + '</strong> to your dashboard.');
+            scrollMessages();
+            if (pageEl) {
+              var mainCol = document.querySelector('.main-col');
+              var elTop = pageEl.getBoundingClientRect().top;
+              var mainTop = mainCol.getBoundingClientRect().top;
+              mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+            }
+          };
+        })(tool, chip);
+        toolsList.appendChild(chip);
+      });
+      document.getElementById('helpful-tools-card').style.display = '';
+    }
+
+    var msgs = document.getElementById('voyager-messages');
+    var pickedLabel = selectedNums.length === filteredModules.length ? 'Add both' : 'Add ' + selectedNums.join(' only, ');
+    appendMsg('msg-user', pickedLabel);
+
+    showTypingThenReply(msgs, function() {
+      var addedStr = addedLabels.join(' and ');
+      var toolsNote = toolsToShow.length > 0 ? ' I\'ve also surfaced a few related tools at the bottom of your dashboard you can add anytime.' : '';
+      appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + addedStr + '</strong> to your dashboard.' + toolsNote);
+      setSuggestions([
+        '"At what rate would refinancing save me money?"',
+        '"How does my equity affect my options?"',
+        '"What home improvements add the most value?"'
+      ]);
+      var firstId = null;
+      filteredModules.forEach(function(m) {
+        if (!firstId && selectedNums.indexOf(m.num) !== -1) firstId = m.id;
+      });
+      if (firstId) {
+        var el = document.getElementById(firstId);
+        if (el) {
+          var mainCol = document.querySelector('.main-col');
+          var elTop = el.getBoundingClientRect().top;
+          var mainTop = mainCol.getBoundingClientRect().top;
+          mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+        }
+      }
+
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'Here\'s what I\'d suggest next:<br><br>1. <strong>Review the homeowner insights module</strong> — slide it open and look at your current rate vs. what you\'re paying.<br>2. <strong>Check your break-even point</strong> — how long until refinancing pays for itself depends on your current rate. I can help you think through that.<br>3. <strong>Go to the Plan tab</strong> — that\'s where you can model your options in detail.<br><br>What would you like to start with?<div class="intent-chips" id="save-guidance-chips" style="margin-top:10px;"><button class="intent-chip" onclick="saveGuidancePath(\'module\')">Help me understand the module</button><button class="intent-chip" onclick="saveGuidancePath(\'breakeven\')">How do I figure out my break-even?</button><button class="intent-chip" onclick="saveGuidancePath(\'plan\')">Take me to the Plan tab</button></div>');
+          setSuggestions([
+            '"Help me understand the module"',
+            '"How do I figure out my break-even?"',
+            { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+          ]);
+        }, 800);
+      }, 1400);
+    }, 700);
+  }
+
+  function saveGuidancePath(choice) {
+    var chips = document.getElementById('save-guidance-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    var labels = { module: 'Help me understand the module', breakeven: 'How do I figure out my break-even?', plan: 'Take me to the Plan tab' };
+    appendMsg('msg-user', labels[choice]);
+    if (choice === 'module') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'The homeowner insights module shows three key stats for your situation:<br><br>1. <strong>Current avg. 30-yr mortgage rate (6.4%)</strong> — this is what new borrowers are paying today. If your existing rate is higher, you may be able to save by refinancing.<br>2. <strong>Appreciation (+8.2% YoY)</strong> — your home type in 98103 has gone up 8.2% this year. That builds equity and strengthens your position on a refinance appraisal.<br>3. <strong>Your estimated equity ($211k)</strong> — this is what you\'d keep after paying off your mortgage. Lenders typically want at least 20% equity for the best refi rates.<br><br>The "Refinance and save" callout at the bottom shows your estimated monthly payment. That\'s your baseline for calculating break-even.');
+        setSuggestions(['"How do I figure out my break-even?"', '"What rate would make refinancing worth it?"', { label: 'Go to Plan tab →', href: 'plan-overview.html' }]);
+      }, 800);
+    } else if (choice === 'breakeven') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Break-even is simple: <strong>closing costs ÷ monthly savings = months to break even</strong>.<br><br>Typical closing costs for a refi run about $3,000–$5,000. If refinancing saves you $200/month, you break even in 15–25 months — after that, it\'s pure savings.<br><br>To give you a real number, I\'d need to know your current rate. What are you paying now?<div class="intent-chips" id="breakeven-rate-chips" style="margin-top:10px;"><button class="intent-chip" onclick="breakevenRate(\'7\')">My rate is around 7%</button><button class="intent-chip" onclick="breakevenRate(\'6\')">My rate is around 6%</button><button class="intent-chip" onclick="breakevenRate(\'unsure\')">I\'m not sure</button></div>');
+        setSuggestions(['"My rate is around 7%"', '"My rate is around 6%"', '"I\'m not sure"']);
+      }, 800);
+    } else {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'The Plan tab is where you can model your refinance options in detail — compare rates, see monthly savings, and build a timeline.<a href="plan-overview.html" class="msg-cta">Go to your Plan tab &rarr;</a>');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What would refinancing save me?"']);
+      }, 700);
+    }
+  }
+
+  function breakevenRate(rate) {
+    var chips = document.getElementById('breakeven-rate-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    if (rate === '7') {
+      appendMsg('msg-user', 'My rate is around 7%');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'At 7%, you\'re paying about <strong>$250–$300/month more</strong> than today\'s going rate of 6.4%. Assuming $4,000 in closing costs, you\'d break even in roughly <strong>13–16 months</strong> — that\'s a strong case for refinancing if you plan to stay in the home that long.<br><br>The Plan tab can run the full numbers with your actual loan balance.');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What are the closing costs for a refi?"']);
+      }, 800);
+    } else if (rate === '6') {
+      appendMsg('msg-user', 'My rate is around 6%');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'At 6%, you\'re actually close to today\'s rate of 6.4% — meaning a standard rate-and-term refi probably wouldn\'t save you much. A cash-out refi to tap your equity might still make sense depending on what you\'d use it for. Worth running the full numbers on the Plan tab.');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What is a cash-out refi?"']);
+      }, 800);
+    } else {
+      appendMsg('msg-user', 'I\'m not sure');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'No problem — check your most recent mortgage statement or log into your lender\'s portal. It\'s usually listed as your "interest rate" or "note rate." Once you have it, come back and I can give you a real break-even estimate. Or head to the Plan tab and enter it there.');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"My rate is around 7%"']);
+      }, 700);
+    }
+  }
+
+  function selectSellPath(path) {
+    var pathChips = document.getElementById('sell-path-chips');
+    if (pathChips) pathChips.style.display = 'none';
+
+    var pathData = sellExploreModules[path];
+    var msgs = document.getElementById('voyager-messages');
+
+    var pathLabels = { sell_only: 'Selling only', buy_sell: 'Buy and sell', rent: 'Rent it out instead' };
+    appendMsg('msg-user', pathLabels[path]);
+
+    showTypingThenReply(msgs, function() {
+      var available = filterAlreadyVisible(pathData.modules);
+      if (available.length === 0) {
+        appendMsg('msg-voyager', 'You already have all the relevant modules on your dashboard. Is there anything else I can help you with?');
+        return;
+      }
+      var moduleText = 'Here are the modules I\'d add to your dashboard:<br><br>';
+      available.forEach(function(m) { moduleText += m.num + '. ' + m.label + '<br>'; });
+      moduleText += '<br>Which would you like to add?';
+
+      var allNums = available.map(function(m) { return m.num; });
+      var chips = '<div class="intent-chips" id="sell-module-chips" style="margin-top:10px;">';
+      chips += available.length > 1 ? '<button class="intent-chip" onclick="addSellModules(\'' + path + '\',[' + allNums.join(',') + '])">Add all</button>' : '';
+      available.forEach(function(m) {
+        chips += '<button class="intent-chip" onclick="addSellModules(\'' + path + '\',[' + m.num + '])">Add ' + m.num + (available.length > 1 ? ' only' : '') + '</button>';
+      });
+      chips += '</div>';
+
+      window._pendingModuleContext = { type: 'sell', path: path };
+      // Rebuild pathData.modules with filtered nums so addSellModules resolves correctly
+      window._sellPathModulesFiltered = available;
+      appendMsg('msg-voyager', moduleText + chips);
+    }, 800);
+  }
+
+  function addSellModules(path, selectedNums) {
+    window._pendingModuleContext = null;
+    var pathChips = document.getElementById('sell-module-chips');
+    if (pathChips) pathChips.style.display = 'none';
+
+    var pathData = sellExploreModules[path];
+    var filteredModules = window._sellPathModulesFiltered || pathData.modules;
+    var addedLabels = [];
+
+    filteredModules.forEach(function(m) {
+      if (selectedNums.indexOf(m.num) !== -1) {
+        var el = document.getElementById(m.id);
+        if (el) el.style.display = '';
+        addedLabels.push(m.label);
+      }
+    });
+
+    // Populate helpful tools with selling-relevant unselected modules + helpful tools list
+    var toolsList = document.getElementById('helpful-tools-list');
+    toolsList.innerHTML = '';
+    var toolsToShow = pathData.helpfulTools.slice();
+    // Also include any primary modules NOT selected
+    filteredModules.forEach(function(m) {
+      if (selectedNums.indexOf(m.num) === -1) {
+        toolsToShow.push({ label: m.label, id: m.id });
+      }
+    });
+
+    if (toolsToShow.length > 0) {
+      toolsToShow.forEach(function(tool) {
+        var chip = document.createElement('button');
+        chip.style.cssText = 'background:#ffffff; border:1.5px solid #C8CDD3; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:#212529; cursor:pointer; text-align:left; font-family:inherit; display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;';
+        chip.innerHTML = '<span>' + tool.label + '</span><span style="font-size:11px; color:#6C757D; font-weight:500;">+ Add</span>';
+        chip.onclick = (function(t, btn) {
+          return function() {
+            var pageEl = document.getElementById(t.id);
+            if (pageEl) pageEl.style.display = '';
+            btn.innerHTML = '<span>' + t.label + '</span><span style="font-size:11px; color:#2a7d4f; font-weight:600;">&#10003; Added</span>';
+            btn.style.opacity = '0.6';
+            btn.disabled = true;
+            appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + t.label + '</strong> to your dashboard.');
+            scrollMessages();
+            if (pageEl) {
+              var mainCol = document.querySelector('.main-col');
+              var elTop = pageEl.getBoundingClientRect().top;
+              var mainTop = mainCol.getBoundingClientRect().top;
+              mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+            }
+          };
+        })(tool, chip);
+        toolsList.appendChild(chip);
+      });
+      document.getElementById('helpful-tools-card').style.display = '';
+    }
+
+    var msgs = document.getElementById('voyager-messages');
+    var pickedLabel = selectedNums.length === filteredModules.length ? 'Add all' : 'Add ' + selectedNums.join(' only, ');
+    appendMsg('msg-user', pickedLabel);
+
+    showTypingThenReply(msgs, function() {
+      var addedStr = addedLabels.join(' and ');
+      var toolsNote = toolsToShow.length > 0 ? ' I\'ve also added a few other helpful tools for selling at the bottom of your dashboard — you can add any of them whenever you\'re ready.' : '';
+      appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + addedStr + '</strong> to your dashboard.' + toolsNote);
+      setSuggestions([
+        '"What selling option would net me the most?"',
+        '"How long does it take to sell in this market?"',
+        { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+      ]);
+      // Scroll to first added module
+      var firstId = null;
+      filteredModules.forEach(function(m) {
+        if (!firstId && selectedNums.indexOf(m.num) !== -1) firstId = m.id;
+      });
+      if (firstId) {
+        var el = document.getElementById(firstId);
+        if (el) {
+          var mainCol = document.querySelector('.main-col');
+          var elTop = el.getBoundingClientRect().top;
+          var mainTop = mainCol.getBoundingClientRect().top;
+          mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+        }
+      }
+
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'Here\'s what I\'d suggest doing next:<br><br>1. <strong>Review your selling options</strong> — the selling options module is now on your page. Take a look at what\'s available.<br>2. <strong>Connect with a listing agent</strong> — Sarah Chen or Marcus Lee can walk you through pricing and timeline.<br>3. <strong>Go to the Plan tab</strong> — that\'s where you can compare options side by side, build a timeline, and track everything.<br><br>What would you like to do first?<div class="intent-chips" id="sell-guidance-chips" style="margin-top:10px;"><button class="intent-chip" onclick="sellGuidancePath(\'options\')">Walk me through my selling options</button><button class="intent-chip" onclick="sellGuidancePath(\'agent\')">Connect with an agent</button><button class="intent-chip" onclick="sellGuidancePath(\'plan\')">Take me to the Plan tab</button></div>');
+          setSuggestions([
+            '"Walk me through my selling options"',
+            '"Connect with an agent"',
+            { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+          ]);
+        }, 800);
+      }, 1400);
+    }, 700);
+  }
+
+  function sellGuidancePath(choice) {
+    var chips = document.getElementById('sell-guidance-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    var labels = { options: 'Walk me through my selling options', agent: 'Connect with an agent', plan: 'Take me to the Plan tab' };
+    appendMsg('msg-user', labels[choice]);
+    if (choice === 'options') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Here\'s a quick look at your four options:<br><br>1. <strong>Cash offer</strong> — fast and certain. You sell directly to a buyer like Opendoor, skip showings and open houses, and close on your timeline. Trade-off: usually a bit below market value.<br>2. <strong>Partner agent</strong> — Zillow connects you with a top local agent. Widest buyer reach through Showcase listings. Best bet for maximizing price.<br>3. <strong>List with your own agent</strong> — bring your own agent and they post on Zillow. Your choice, your relationship.<br>4. <strong>FSBO (For Sale By Owner)</strong> — full control, no agent commission. Takes more work, but you keep the fees.<br><br>The selling options module on your page has the links to get started with any of these.');
+        setSuggestions([
+          '"What would I net from a cash offer vs. an agent?"',
+          '"How do I connect with a partner agent?"',
+          { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+        ]);
+        var el = document.getElementById('ai-summary-module');
+        if (el) {
+          var mainCol = document.querySelector('.main-col');
+          mainCol.scrollTop = mainCol.scrollTop + (el.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16;
+        }
+      }, 800);
+    } else if (choice === 'agent') {
+      openAgentModal();
+    } else {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'The Plan tab is where your selling journey comes together — compare options, build your timeline, and track next steps.<a href="plan-overview.html" class="msg-cta">Go to your Plan tab &rarr;</a>');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What are my selling options?"']);
+      }, 700);
+    }
+  }
+
+  // ── ONBOARDING BUCKET FLOW ──
+
+  // Track state for onboarding flow
+  var onboardingState = {
+    bucket: null,
+    clarifyAnswer: null
+  };
+
+  // Module definitions per bucket
+  var bucketModules = {
+    track: {
+      question: 'Are you tracking it passively — just keeping an eye on things — or are you starting to think about a potential move?',
+      chips: [
+        { label: 'Just keeping an eye on things', key: 'passive' },
+        { label: 'Starting to think about a move', key: 'active' }
+      ],
+      modulesByAnswer: {
+        passive: {
+          text: 'Got it. Here are the modules I\'d add:\n\n1. Comparable homes\n2. Market insights\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Comparable homes', id: 'comps-section' },
+            { num: 2, label: 'Market insights', id: 'market-insights-section' }
+          ]
+        },
+        active: {
+          text: 'Got it. Here are the modules I\'d add:\n\n1. Comparable homes\n2. Market insights\n3. Selling options\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Comparable homes', id: 'comps-section' },
+            { num: 2, label: 'Market insights', id: 'market-insights-section' },
+            { num: 3, label: 'Selling options', id: 'ai-summary-module' }
+          ]
+        }
+      }
+    },
+    equity: {
+      question: 'Are you looking to understand your current equity position, or are you thinking about ways to put that equity to work?',
+      chips: [
+        { label: 'Understand my position', key: 'position' },
+        { label: 'Put my equity to work', key: 'work' }
+      ],
+      modulesByAnswer: {
+        position: {
+          text: 'Here are the modules I\'d add:\n\n1. Home equity\n2. Homeowner insights\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Home equity', id: 'home-equity-card' },
+            { num: 2, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+          ]
+        },
+        work: {
+          text: 'Here are the modules I\'d add:\n\n1. Home equity\n2. Homeowner insights\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Home equity', id: 'home-equity-card' },
+            { num: 2, label: 'Homeowner insights', id: 'homeowner-insights-card' }
+          ]
+        }
+      }
+    },
+    sell: {
+      question: 'Are you actively thinking about selling, or just want to understand your options for now?',
+      chips: [
+        { label: 'Actively thinking about it', key: 'active' },
+        { label: 'Just exploring for now', key: 'exploring' }
+      ],
+      modulesByAnswer: {
+        active: {
+          text: 'Here are the modules I\'d add:\n\n1. Selling options\n2. Market insights\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Selling options', id: 'ai-summary-module' },
+            { num: 2, label: 'Market insights', id: 'market-insights-section' }
+          ]
+        },
+        exploring: {
+          text: 'Here are the modules I\'d add:\n\n1. Selling options\n2. Market insights\n\nWhich would you like to add?',
+          modules: [
+            { num: 1, label: 'Selling options', id: 'ai-summary-module' },
+            { num: 2, label: 'Market insights', id: 'market-insights-section' }
+          ]
+        }
+      }
+    }
+  };
+
+  var bucketLabels = {
+    track: 'Track my home\'s value',
+    equity: 'Understand my equity',
+    sell: 'Explore selling options'
+  };
+
+  function filterAlreadyVisible(modules) {
+    var filtered = modules.filter(function(m) {
+      var el = document.getElementById(m.id);
+      return !el || el.style.display === 'none';
+    });
+    return filtered.map(function(m, i) {
+      return { num: i + 1, label: m.label, id: m.id };
+    });
+  }
+
+  function appendMsg(className, html) {
+    var msgs = document.getElementById('voyager-messages');
+    var el = document.createElement('div');
+    el.className = className;
+    el.innerHTML = html;
+    msgs.appendChild(el);
+    scrollMessages();
+    return el;
+  }
+
+  function selectBucket(bucket) {
+    onboardingState.bucket = bucket;
+
+    // Hide the bucket chips from the welcome message
+    document.getElementById('onboarding-bucket-chips').style.display = 'none';
+
+    var label = bucketLabels[bucket];
+    var bucketData = bucketModules[bucket];
+
+    // User bubble
+    appendMsg('msg-user', label);
+
+    // Show typing then Voyager clarifying question
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      var chips = bucketData.chips.map(function(c) {
+        return '<button class="intent-chip" onclick="selectClarify(\'' + bucket + '\',\'' + c.key + '\')">' + c.label + '</button>';
+      }).join('');
+      appendMsg('msg-voyager', bucketData.question + '<div class="intent-chips" style="margin-top:8px;">' + chips + '</div>');
+    }, 700);
+  }
+
+  function selectClarify(bucket, answerKey) {
+    onboardingState.clarifyAnswer = answerKey;
+
+    var bucketData = bucketModules[bucket];
+    var answerData = bucketData.modulesByAnswer[answerKey];
+
+    // Find the chip label for this answer
+    var chipLabel = '';
+    bucketData.chips.forEach(function(c) { if (c.key === answerKey) chipLabel = c.label; });
+
+    // Remove clarify chips from last Voyager message (last .msg-voyager's .intent-chips)
+    var msgs = document.getElementById('voyager-messages');
+    var allVoyager = msgs.querySelectorAll('.msg-voyager');
+    var lastVoyager = allVoyager[allVoyager.length - 1];
+    var lastChips = lastVoyager ? lastVoyager.querySelector('.intent-chips') : null;
+    if (lastChips) lastChips.style.display = 'none';
+
+    // User bubble with their answer
+    appendMsg('msg-user', chipLabel);
+
+    // Show typing then module list with selection chips
+    showTypingThenReply(msgs, function() {
+      var available = filterAlreadyVisible(answerData.modules);
+      if (available.length === 0) {
+        appendMsg('msg-voyager', 'You already have all the relevant modules on your dashboard. Is there anything else you\'d like to explore?');
+        return;
+      }
+      var moduleText = 'Got it. Here are the modules I\'d add:<br><br>';
+      available.forEach(function(m) { moduleText += m.num + '. ' + m.label + '<br>'; });
+      moduleText += '<br>Which would you like to add?';
+
+      var addAllLabel = 'Add ' + available.map(function(m) { return m.num; }).join(' & ');
+      var selChips = '<div class="intent-chips" style="margin-top:10px;" id="module-select-chips">';
+      if (available.length > 1) selChips += '<button class="intent-chip" onclick="addModules(\'' + bucket + '\',\'' + answerKey + '\',[' + available.map(function(m){return m.num;}).join(',') + '])">' + addAllLabel + '</button>';
+      available.forEach(function(m) {
+        selChips += '<button class="intent-chip" onclick="addModules(\'' + bucket + '\',\'' + answerKey + '\',[' + m.num + '])">Add ' + m.num + (available.length > 1 ? ' only' : '') + '</button>';
+      });
+      selChips += '</div>';
+
+      window._pendingModuleContext = { type: 'onboarding', bucket: bucket, answerKey: answerKey };
+      appendMsg('msg-voyager', moduleText + selChips);
+    }, 800);
+  }
+
+  function addModules(bucket, answerKey, selectedNums) {
+    window._pendingModuleContext = null;
+    var answerData = bucketModules[bucket].modulesByAnswer[answerKey];
+
+    // Hide selection chips
+    var selChips = document.getElementById('module-select-chips');
+    if (selChips) selChips.style.display = 'none';
+
+    // Show selected modules; collect unselected ones
+    var addedLabels = [];
+    var unselectedModules = [];
+    answerData.modules.forEach(function(m) {
+      if (selectedNums.indexOf(m.num) !== -1) {
+        var el = document.getElementById(m.id);
+        if (el) el.style.display = '';
+        addedLabels.push(m.label);
+      } else {
+        unselectedModules.push(m);
+      }
+    });
+
+    // Populate helpful tools card with unselected modules as tappable Add chips
+    if (unselectedModules.length > 0) {
+      var toolsList = document.getElementById('helpful-tools-list');
+      toolsList.innerHTML = '';
+      unselectedModules.forEach(function(m) {
+        var chip = document.createElement('button');
+        chip.style.cssText = 'background:#ffffff; border:1.5px solid #C8CDD3; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:#212529; cursor:pointer; text-align:left; font-family:inherit; display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;';
+        chip.innerHTML = '<span>' + m.label + '</span><span style="font-size:11px; color:#6C757D; font-weight:500;">+ Add</span>';
+        chip.onclick = (function(mod, btn) {
+          return function() {
+            var pageEl = document.getElementById(mod.id);
+            if (pageEl) pageEl.style.display = '';
+            btn.innerHTML = '<span>' + mod.label + '</span><span style="font-size:11px; color:#2a7d4f; font-weight:600;">&#10003; Added</span>';
+            btn.style.opacity = '0.6';
+            btn.disabled = true;
+            appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + mod.label + '</strong> to your dashboard.');
+            scrollMessages();
+            if (pageEl) {
+              var mainCol = document.querySelector('.main-col');
+              var elTop = pageEl.getBoundingClientRect().top;
+              var mainTop = mainCol.getBoundingClientRect().top;
+              mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+            }
+          };
+        })(m, chip);
+        toolsList.appendChild(chip);
+      });
+      document.getElementById('helpful-tools-card').style.display = '';
+    }
+
+    // Hide welcome card
+    document.getElementById('welcome-card').style.display = 'none';
+
+    // Update Voyager mode badge
+    document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+
+    var msgs = document.getElementById('voyager-messages');
+    var pickedText = selectedNums.length === answerData.modules.length
+      ? 'Add ' + answerData.modules.map(function(m){return m.num;}).join(' & ')
+      : 'Add ' + selectedNums.join(' only, ');
+    appendMsg('msg-user', pickedText);
+
+    showTypingThenReply(msgs, function() {
+      var addedStr = addedLabels.join(' and ');
+      var toolsNote = unselectedModules.length > 0
+        ? ' I\'ve also placed a few other helpful tools at the bottom of the page in case you want to add more later.'
+        : '';
+      appendMsg('msg-voyager', 'Done — I\'ve added <strong>' + addedStr + '</strong> to your dashboard.' + toolsNote);
+
+      // After a beat, Voyager moves to the next guided step: Zestimate accuracy
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'One thing worth doing while you\'re here: make sure your Zestimate reflects reality. It\'s built from public records, which are often out of date — things like square footage, recent renovations, or a new roof can move it by thousands of dollars.<br><br>Have you made any updates to your home in the last few years? A remodel, new roof, or added square footage?<div class="intent-chips" id="zestimate-check-chips" style="margin-top:10px;"><button class="intent-chip" onclick="zestimatePath(\'yes\')">Yes, I\'ve made some updates</button><button class="intent-chip" onclick="zestimatePath(\'no\')">No major updates</button><button class="intent-chip" onclick="zestimatePath(\'unsure\')">Not sure what counts</button></div>');
+          setSuggestions([
+            '"How is my Zestimate calculated?"',
+            '"What home updates have the most impact on value?"',
+            '"How do I edit my home facts?"'
+          ]);
+        }, 800);
+      }, 1400);
+
+      // Scroll to first newly added module
+      var firstId = null;
+      answerData.modules.forEach(function(m) {
+        if (!firstId && selectedNums.indexOf(m.num) !== -1) firstId = m.id;
+      });
+      if (firstId) {
+        var el = document.getElementById(firstId);
+        if (el) {
+          var mainCol = document.querySelector('.main-col');
+          var elTop = el.getBoundingClientRect().top;
+          var mainTop = mainCol.getBoundingClientRect().top;
+          mainCol.scrollTop = mainCol.scrollTop + (elTop - mainTop) - 16;
+        }
+      }
+    }, 700);
+  }
+
+  // Return-visit "add more" flow — re-shows bucket chips
+  function startAddMore() {
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', 'I want to add something new to my dashboard');
+    showTypingThenReply(msgs, function() {
+      var chips = [
+        { bucket: 'track', label: 'Track my home\'s value' },
+        { bucket: 'equity', label: 'Understand my equity' },
+        { bucket: 'sell', label: 'Explore selling options' }
+      ].map(function(c) {
+        return '<button class="intent-chip" onclick="selectBucket(\'' + c.bucket + '\')">' + c.label + '</button>';
+      }).join('');
+      appendMsg('msg-voyager', 'Sure — what area are you interested in?<div class="intent-chips" style="margin-top:8px;">' + chips + '</div>');
+    }, 600);
+    // Hide the return welcome message's chip
+    var returnWelcome = document.getElementById('msg-return-welcome');
+    if (returnWelcome) {
+      var chips2 = returnWelcome.querySelector('.intent-chips');
+      if (chips2) chips2.style.display = 'none';
+    }
+  }
+
+  // ── ORIGINAL VOYAGER INTENT CHIPS (kept for backwards compatibility) ──
   var intentResponses = {
     track: {
       userMsg: "I want to track my home's value",
@@ -1307,6 +2259,64 @@
     }
   }
 
+  // ── ZESTIMATE ACCURACY GUIDED FLOW ──
+  function zestimatePath(answer) {
+    var chips = document.getElementById('zestimate-check-chips');
+    if (chips) chips.style.display = 'none';
+
+    var msgs = document.getElementById('voyager-messages');
+
+    var labels = { yes: 'Yes, I\'ve made some updates', no: 'No major updates', unsure: 'Not sure what counts' };
+    appendMsg('msg-user', labels[answer]);
+
+    if (answer === 'yes') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Great — let\'s get those logged. The biggest movers are kitchen or bath renovations, new roof or HVAC, and corrected square footage. I\'ll pull up your home facts now so we can update them.<br><br>Tell me what you\'d like to change and I\'ll make the edits for you.');
+        setSuggestions(['"Update my square footage"', '"I renovated my kitchen"', '"I got a new roof"']);
+        openHomeFacts();
+      }, 700);
+    } else if (answer === 'no') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Good to know. Even without renovations, it\'s worth a quick check on the basics — public records are often off on square footage or bedroom count, and correcting those can move your Zestimate by several thousand dollars.<br><br>Want to take a look at your home facts?<div class="intent-chips" id="hf-prompt-chips" style="margin-top:8px;"><button class="intent-chip" onclick="promptOpenHomeFacts()">Yes, let\'s check</button><button class="intent-chip" onclick="skipHomeFacts()">I\'ll do it later</button></div>');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What details affect it most?"']);
+      }, 700);
+    } else {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'The things that move your Zestimate the most are:<br><br>· <strong>Square footage</strong> — if public records are off, even 100 sqft can shift your estimate $3–8k<br>· <strong>Kitchen or bath renovations</strong> — the highest-impact updates, worth $10–30k<br>· <strong>New roof or HVAC</strong> — affects condition rating and estimate<br>· <strong>Additions or converted spaces</strong><br><br>Do any of those apply to your home?<div class="intent-chips" id="hf-prompt-chips" style="margin-top:8px;"><button class="intent-chip" onclick="promptOpenHomeFacts()">Yes — let\'s update my home facts</button><button class="intent-chip" onclick="skipHomeFacts()">None of those apply</button></div>');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What details affect it most?"']);
+      }, 700);
+    }
+  }
+
+  function promptOpenHomeFacts() {
+    var chips = document.getElementById('hf-prompt-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', 'Yes, let\'s check');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'I\'ve pulled up your home facts. Tell me what you\'d like to update and I\'ll make the change for you.');
+      setSuggestions(['"Update my square footage"', '"I renovated my kitchen"', '"I got a new roof"']);
+      openHomeFacts();
+    }, 600);
+  }
+
+  function skipHomeFacts() {
+    var chips = document.getElementById('hf-prompt-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', 'I\'ll do it later');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'No problem — you can always update your home facts from the Edit link at the top of this page, or just ask me anytime.');
+      // Move to next-best-step guidance
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'Now that your dashboard is set up, here\'s what I\'d suggest thinking about next:<br><br>1. <strong>Review your home value</strong> — check how it\'s trended and what\'s driving it<br>2. <strong>Understand your equity</strong> — know what you\'d actually walk away with if you sold today<br>3. <strong>Explore your options</strong> — when you\'re ready, the Plan tab walks you through what\'s available<br><br>What sounds most useful right now?<div class="intent-chips" id="post-save-chips" style="margin-top:10px;"><button class="intent-chip" onclick="postSavePath(\'value\')">Review my home value</button><button class="intent-chip" onclick="postSavePath(\'equity\')">Understand my equity</button><button class="intent-chip" onclick="postSavePath(\'plan\')">Explore my options</button></div>');
+          setSuggestions(['"How is my Zestimate calculated?"', '"What does my equity mean?"', '"Is now a good time to sell?"']);
+        }, 800);
+      }, 1000);
+    }, 600);
+  }
+
   var homeFactsMode = false;
 
   function openHomeFacts() {
@@ -1335,6 +2345,46 @@
     msgs.appendChild(voyagerReply);
     scrollMessages();
     closeHomeFacts();
+    firePostSaveFollowUp(msgs);
+  }
+
+  function firePostSaveFollowUp(msgs) {
+    setTimeout(function() {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Good — your Zestimate should be more accurate now. A few things worth thinking about from here:<br><br>1. <strong>Review your home value</strong> — check the Zestimate history chart to see how it\'s trended<br>2. <strong>Understand your equity</strong> — based on updated facts, your equity position may have shifted<br>3. <strong>Explore your options</strong> — if selling has been on your mind, the Plan tab is where you can go deeper<br><br>What would you like to do next?<div class="intent-chips" id="post-save-chips" style="margin-top:10px;"><button class="intent-chip" onclick="postSavePath(\'value\')">Review my home value</button><button class="intent-chip" onclick="postSavePath(\'equity\')">Understand my equity</button><button class="intent-chip" onclick="postSavePath(\'plan\')">Explore my options</button></div>');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What does my equity mean?"', '"Is now a good time to sell?"']);
+      }, 900);
+    }, 1200);
+  }
+
+  function postSavePath(choice) {
+    var chips = document.getElementById('post-save-chips');
+    if (chips) chips.style.display = 'none';
+
+    var msgs = document.getElementById('voyager-messages');
+    var labels = { value: 'Review my home value', equity: 'Understand my equity', plan: 'Explore my options' };
+    appendMsg('msg-user', labels[choice]);
+
+    showTypingThenReply(msgs, function() {
+      if (choice === 'value') {
+        appendMsg('msg-voyager', 'Your Zestimate history chart is just above — it shows how your home\'s value has trended over the last year. The +8% YoY figure reflects your home type in 98103.<br><br>Once your updated facts are processed (within 24 hours), the estimate will sharpen. Worth checking back then to see the impact of the changes you just made.');
+        setSuggestions(['"What affects my Zestimate most?"', '"How do I compare to similar homes?"', '"What would I net if I sold today?"']);
+      } else if (choice === 'equity') {
+        document.getElementById('home-equity-card').style.display = '';
+        appendMsg('msg-voyager', 'I\'ve added the home equity module to your dashboard — you\'ll see it just below your home value. Right now it\'s showing <strong>~$211k</strong> in estimated equity. Once your updated facts are reflected, that number may shift.<br><br>The "if you sold today" figure shows your net proceeds after agent, closing, and transfer fees.');
+        setSuggestions(['"What would I net if I sold today?"', '"How can I use my equity?"', '"Is now a good time to sell?"']);
+        setTimeout(function() {
+          var el = document.getElementById('home-equity-card');
+          if (el) {
+            var mainCol = document.querySelector('.main-col');
+            mainCol.scrollTop = mainCol.scrollTop + (el.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16;
+          }
+        }, 400);
+      } else {
+        appendMsg('msg-voyager', 'The Plan tab is where your selling journey lives — compare options like a cash offer vs. listing with an agent, build a timeline, and connect with an agent if you\'re ready.<br><br>You can always come back to this dashboard to check your numbers before making any decisions.<a href="plan-overview.html" class="msg-cta" style="margin-top:10px;">Go to your Plan tab &rarr;</a>');
+        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What are my selling options?"']);
+      }
+    }, 700);
   }
 
   function showTypingThenReply(msgs, replyFn, delay) {
@@ -1365,6 +2415,39 @@
 
     var lower = val.toLowerCase();
 
+    // Trigger: numbered module selection (e.g. "1 and 3", "just 2", "1, 2")
+    if (!homeFactsMode && /\b[123]\b/.test(lower)) {
+      var nums = [];
+      [1,2,3].forEach(function(n) { if (new RegExp('\\b' + n + '\\b').test(lower)) nums.push(n); });
+      if (nums.length > 0 && window._pendingModuleContext) {
+        var ctx = window._pendingModuleContext;
+        if (ctx.type === 'onboarding') addModules(ctx.bucket, ctx.answerKey, nums);
+        else if (ctx.type === 'sell') addSellModules(ctx.path, nums);
+        else if (ctx.type === 'save') addSaveModules(ctx.path, nums);
+        else if (ctx.type === 'refi') selectRefiPath(nums.indexOf(2) !== -1 ? 'both' : 'refi_only');
+        return;
+      }
+    }
+
+    // Trigger: specific refinance intent
+    if (!homeFactsMode && (lower.indexOf('refi') !== -1 || lower.indexOf('lower my') !== -1 || lower.indexOf('lower my payment') !== -1)) {
+      showTypingThenReply(msgs, function() {
+        window._pendingModuleContext = { type: 'refi' };
+        appendMsg('msg-voyager', 'Worth looking at. Here\'s where things stand for you right now:<br><br>Current 30-yr rate is <strong>6.4%</strong>. Your equity is around <strong>~$211k</strong> — that\'s strong leverage if you\'re going to refinance. And your home has appreciated 4% since February, which works in your favor on the appraisal.<br><br>One other thing worth knowing: your home\'s value going up can also mean your insurance coverage is underpriced right now — an insurance review could save you money too. Want me to add modules for both, or just refinancing?<div class="intent-chips" id="refi-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="selectRefiPath(\'both\')">Both</button><button class="intent-chip" onclick="selectRefiPath(\'refi_only\')">Just refinancing</button></div>');
+        setSuggestions(['"At what rate would refinancing save me money?"', '"How does my equity affect my options?"']);
+      }, 800);
+      return;
+    }
+
+    // Trigger: general savings intent (broader, not specifically refi)
+    if (!homeFactsMode && (lower.indexOf('save') !== -1 || lower.indexOf('saving') !== -1 || lower.indexOf('ways to save') !== -1)) {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'A few angles worth looking at based on your situation:<br><br>· <strong>Refinancing:</strong> current 30-yr rate is 6.4%. If your existing rate is higher, there may be savings here — your equity at ~$211k gives you strong leverage.<br>· <strong>Insurance review:</strong> your home has appreciated 4% since February. That can mean you\'re either over- or under-insured, and adjusting could save you money.<br>· <strong>Equity access:</strong> you could tap equity for improvements that pay back in value.<br><br>Which of these sounds most relevant?<div class="intent-chips" id="save-path-chips-2" style="margin-top:10px;"><button class="intent-chip" onclick="selectSavePath(\'refi\')">Refinancing</button><button class="intent-chip" onclick="selectSavePath(\'insurance\')">Insurance review</button><button class="intent-chip" onclick="selectSavePath(\'equity\')">Using my equity</button></div>');
+        setSuggestions(['"At what rate would refinancing save me money?"', '"How does my equity affect my options?"', '"What home improvements add the most value?"']);
+      }, 800);
+      return;
+    }
+
     // Trigger: open home facts drawer
     if (!homeFactsMode && (lower.indexOf('home fact') !== -1 || lower.indexOf('update my home') !== -1 || lower.indexOf('edit home') !== -1)) {
       showTypingThenReply(msgs, function() {
@@ -1382,13 +2465,40 @@
       var sqftMatch = val.match(/(\d[\d,]*)\s*(sq\s*ft|sqft|square\s*feet?)?/i);
 
       // Done / finished
-      if (lower === 'done' || lower === 'i\'m done' || lower === "i'm done" || lower.indexOf('all done') !== -1 || lower.indexOf('finished') !== -1 || lower.indexOf('that\'s it') !== -1 || lower.indexOf("that's it") !== -1) {
+      if (lower === 'done' || lower === 'i\'m done' || lower === "i'm done" || lower.indexOf('all done') !== -1 || lower.indexOf('finished') !== -1 || lower.indexOf('that\'s it') !== -1 || lower.indexOf("that's it") !== -1 || lower.indexOf("that's all") !== -1 || lower.indexOf('all the changes') !== -1) {
         showTypingThenReply(msgs, function() {
           var reply = document.createElement('div');
           reply.className = 'msg-voyager';
           reply.innerHTML = 'Your home facts have been updated and saved. Your Zestimate will reflect the changes within 24 hours.';
           msgs.appendChild(reply);
           closeHomeFacts();
+          firePostSaveFollowUp(msgs);
+        }, 800);
+        return;
+      }
+
+      // Kitchen renovation
+      if (lower.indexOf('kitchen') !== -1 || lower.indexOf('bath') !== -1 || lower.indexOf('renovated') !== -1 || lower.indexOf('remodel') !== -1) {
+        showTypingThenReply(msgs, function() {
+          var room = lower.indexOf('kitchen') !== -1 ? 'kitchen' : 'bathroom';
+          var reply = document.createElement('div');
+          reply.className = 'msg-voyager';
+          reply.innerHTML = 'Logged — I\'ve noted the ' + room + ' renovation in your home facts. That\'s one of the highest-impact updates for your Zestimate. Anything else, or are you all set?';
+          msgs.appendChild(reply);
+          setSuggestions(['"I also got a new roof"', '"Update my square footage"', '"That\'s all the changes"']);
+        }, 800);
+        return;
+      }
+
+      // Roof / HVAC
+      if (lower.indexOf('roof') !== -1 || lower.indexOf('hvac') !== -1 || lower.indexOf('furnace') !== -1 || lower.indexOf('ac') !== -1) {
+        showTypingThenReply(msgs, function() {
+          var what = lower.indexOf('roof') !== -1 ? 'roof' : 'HVAC';
+          var reply = document.createElement('div');
+          reply.className = 'msg-voyager';
+          reply.innerHTML = 'Logged — I\'ve noted the new ' + what + '. That affects your home\'s condition rating and can move the Zestimate. Anything else?';
+          msgs.appendChild(reply);
+          setSuggestions(['"I also renovated my kitchen"', '"Update my square footage"', '"That\'s all the changes"']);
         }, 800);
         return;
       }
@@ -1409,6 +2519,7 @@
           reply.className = 'msg-voyager';
           reply.innerHTML = 'Done — I\'ve updated your finished square footage to <strong>' + formatted + ' sqft</strong>. Anything else you\'d like to change, or are you all set?';
           msgs.appendChild(reply);
+          setSuggestions(['"I renovated my kitchen"', '"I got a new roof"', '"That\'s all the changes"']);
         }, 900);
         return;
       }
@@ -1443,6 +2554,44 @@
   document.getElementById('voyager-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') sendMessage();
   });
+
+  // ── AGENT CONNECTED STATE (on page load after returning from agent-modal) ──
+  (function applyAgentConnectedState() {
+    if (sessionStorage.getItem('agentConnected') !== '1') return;
+    sessionStorage.removeItem('agentConnected');
+
+    // Restore the screen context we came from
+    if (sessionStorage.getItem('returnVisitMode') === '1') {
+      activateReturnVisit();
+    }
+
+    // Make sure agent matches section is visible
+    document.getElementById('agent-matches-section').style.display = '';
+
+    // Find Sarah Chen's card and replace the Connect button with a Connected badge
+    var agentCards = document.querySelectorAll('.agent-card-main');
+    agentCards.forEach(function(card) {
+      var nameEl = card.querySelector('.agent-card-name');
+      if (nameEl && nameEl.textContent.trim() === 'Sarah Chen') {
+        var connectEl = card.querySelector('.agent-card-connect');
+        if (connectEl) {
+          connectEl.innerHTML = '<div style="display:inline-flex; align-items:center; gap:6px; margin-top:6px;"><span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:#212529; color:#fff; padding:3px 9px; border-radius:999px;">Connected</span><span style="font-size:11px; color:#6C757D;">Message sent</span></div>';
+        }
+        card.style.borderColor = '#212529';
+      }
+    });
+
+    // Fire Voyager acknowledgment
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'You\'re connected with <strong>Sarah Chen</strong>. She\'ll reach out within 24 hours to discuss your home and goals.<br><br>When you\'re ready to go deeper — compare your selling options, build a timeline, and track your next steps — the Plan tab is set up for that.<a href="plan-overview.html" class="msg-cta">Go to your Plan tab when you\'re ready &rarr;</a>');
+      setSuggestions([
+        '"What should I ask Sarah when she reaches out?"',
+        '"What selling options should I compare?"',
+        { label: 'Go to Plan tab →', href: 'plan-overview.html' }
+      ]);
+    }, 1000);
+  })();
 
   </script>
 
