@@ -2641,9 +2641,11 @@
     // Apply sell goal state on load — builds task list, progress bar, locked tasks
     setTimeout(function() {
       applyRV2NewGoal();
-      // Hide task 1 content — only reveal when task 1 is clicked
-      var s1 = document.getElementById('section-1');
-      if (s1) s1.style.display = 'none';
+      // Hide task 1 content, divider, departure banner, and new goal card
+      ['section-1', 'divider-1', 'selling-departure-banner', 'rv2-new-goal-card'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
       // Show header cards
       ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
         var el = document.getElementById(id);
