@@ -1707,6 +1707,65 @@
   }
 
 
+  // ── SELL FLOW (RV1 research study) ──
+  function sellStep(beat, answer) {
+    var chipsId = 'sell-' + beat + '-chips';
+    var chips = document.getElementById(chipsId);
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    var labels = {
+      timeline: { 'soon': 'As soon as possible, within 3 months', 'flexible': '3 to 6 months, I have some flexibility', 'norush': 'No rush, I want to do it right' },
+      homefacts: { 'yes': 'Yes, everything looks accurate', 'no': 'No, I need to update a few things' }
+    };
+    appendMsg('msg-user', labels[beat][answer]);
+
+    if (beat === 'timeline') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Good to know. Are your home facts up to date? Accurate facts help make sure your Zestimate and net proceeds estimate are as close to reality as possible.<div class="intent-chips" id="sell-homefacts-chips" style="margin-top:10px;"><button class="intent-chip" onclick="sellStep(\'homefacts\',\'yes\')">Yes, everything looks accurate</button><button class="intent-chip" onclick="sellStep(\'homefacts\',\'no\')">No, I need to update a few things</button></div>');
+      }, 900);
+    } else if (beat === 'homefacts') {
+      if (answer === 'no') {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'No problem — you can update them anytime from this page. I\'ll go ahead and set up your plan now, and you can update your facts before you get started.<br><br>Creating your goal now.');
+          setTimeout(function() { sellGoalReveal(msgs); }, 1000);
+        }, 900);
+      } else {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'Creating your goal now.');
+          setTimeout(function() { sellGoalReveal(msgs); }, 800);
+        }, 900);
+      }
+    }
+  }
+
+  function sellGoalReveal(msgs) {
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Your goal is set. The Plan tab is where you\'ll evaluate your options, review your financials, and build out your timeline.<br><br>Your goal: <strong>Sell my home.</strong>');
+      var goalCard = document.getElementById('goal-card');
+      if (goalCard) {
+        goalCard.style.display = '';
+        var goalText = goalCard.querySelector('.goal-text');
+        if (goalText) goalText.textContent = 'Sell my home.';
+        var goalBody = goalCard.querySelector('.goal-body');
+        if (goalBody) goalBody.textContent = 'Your Plan tab has everything you need to evaluate your options, review your financials, and build out your selling timeline.';
+        var goalBtn = goalCard.querySelector('.goal-btn');
+        if (goalBtn) goalBtn.href = 'plan-overview.html?rv2=1';
+        setTimeout(function() {
+          var mainCol = document.querySelector('.main-col');
+          if (mainCol) {
+            mainCol.scrollTo({ top: mainCol.scrollTop + (goalCard.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16, behavior: 'smooth' });
+          }
+        }, 400);
+      }
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'Your market is working in your favor right now — homes in 98103 are moving fast and your Zestimate is up $24k since February. Head to your Plan tab to get started.<a href="plan-overview.html?rv2=1" class="msg-cta" style="margin-top:10px; display:block;">Go to Plan tab &rarr;</a>');
+          setSuggestions(['"What would I net if I sold today?"', '"How long does selling take?"', '"What do I need to do first?"']);
+        }, 800);
+      }, 1600);
+    }, 900);
+  }
+
   function parisGoalReveal(msgs) {
     showTypingThenReply(msgs, function() {
       appendMsg('msg-voyager', 'Here\'s where you are:<br><br>You have a home worth ~<strong>$636,000</strong> with roughly <strong>$211,000 in equity</strong>. You\'re leaving for 2–3 years. And you have a real decision to make before you go.<br><br>I\'m not going to tell you what to do — but I can tell you that this is exactly what the Plan tab is built for. Three paths, your numbers, your tradeoffs. I\'ll create a goal and get it set up for you.<br><br>Your goal: <strong>Figure out what to do with my home before I leave for Paris.</strong>');
@@ -3428,6 +3487,14 @@
 
     var lower = val.toLowerCase();
 
+    // Trigger: sell intent (return visit context)
+    if (isReturnVisit && (lower.indexOf('sell') !== -1 || lower.indexOf('selling') !== -1 || lower.indexOf('want to sell') !== -1 || lower.indexOf('thinking about selling') !== -1 || lower.indexOf('thinking about renting') !== -1)) {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'That\'s a big decision — and based on what I\'m seeing in your market, your timing looks good. A couple of quick questions before I set up your plan.<br><br>What\'s your timeline for selling?<div class="intent-chips" id="sell-timeline-chips" style="margin-top:10px;"><button class="intent-chip" onclick="sellStep(\'timeline\',\'soon\')">As soon as possible, within 3 months</button><button class="intent-chip" onclick="sellStep(\'timeline\',\'flexible\')">3 to 6 months, I have some flexibility</button><button class="intent-chip" onclick="sellStep(\'timeline\',\'norush\')">No rush, I want to do it right</button></div>');
+      }, 800);
+      return;
+    }
+
     // Trigger: free-text life event matching (return visit context)
     if (isReturnVisit && (lower.indexOf('paris') !== -1 || lower.indexOf('moving to') !== -1 || lower.indexOf('relocat') !== -1 || lower.indexOf('assignment') !== -1)) {
       var hasParis = lower.indexOf('paris') !== -1;
@@ -3635,6 +3702,10 @@
       ]);
     }, 1000);
   })();
+
+  if (window.location.search.indexOf('rv1=1') !== -1) {
+    window.addEventListener('DOMContentLoaded', function() { activateReturnVisit(); });
+  }
 
   if (window.location.search.indexOf('rv2=1') !== -1) {
     window.addEventListener('DOMContentLoaded', function() { activateReturnVisit2(); });
