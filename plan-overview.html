@@ -2641,12 +2641,15 @@
     // Apply sell goal state on load — builds task list, progress bar, locked tasks
     setTimeout(function() {
       applyRV2NewGoal();
-      // Show header cards after goal is applied
+      // Hide task 1 content — only reveal when task 1 is clicked
+      var s1 = document.getElementById('section-1');
+      if (s1) s1.style.display = 'none';
+      // Show header cards
       ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.style.display = '';
       });
-      // Reset task 1 to not-started (applyRV2NewGoal sets it inprogress)
+      // Reset task 1 badge to not-started
       var b1 = document.getElementById('task-badge-1');
       var c1 = document.getElementById('task-card-1');
       if (b1) { b1.className = 'task-badge state-notstarted'; b1.textContent = '1'; }
