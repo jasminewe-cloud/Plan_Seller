@@ -2638,8 +2638,8 @@
       }
     };
 
-    // Apply sell goal state synchronously on load
-    applyRV2NewGoal();
+    // Apply sell goal state synchronously on load — skip card swap so rv2-summary-card stays in DOM
+    applyRV2NewGoal(true);
     // Hide departure banner, new goal card, task 1 content and its divider
     ['selling-departure-banner', 'rv2-new-goal-card', 'section-1', 'divider-1'].forEach(function(id) {
       var el = document.getElementById(id);
@@ -2657,7 +2657,7 @@
     if (c1) { c1.className = 'task-card'; }
   }
 
-  function applyRV2NewGoal() {
+  function applyRV2NewGoal(skipCardSwap) {
     rv2Active = true;
 
     // Hide departure banner — no longer relevant once goal is sell
@@ -2763,7 +2763,7 @@
 
     // 3. Update main content area: replace rv2-summary-card with new goal card
     var oldSummary = document.getElementById('rv2-summary-card');
-    if (oldSummary) {
+    if (oldSummary && !skipCardSwap) {
       var newGoalCard = document.createElement('div');
       newGoalCard.id = 'rv2-new-goal-card';
       newGoalCard.style.cssText = 'background:#1a1f36; border:none; border-radius:8px; padding:20px 24px; margin-bottom:16px; color:#9BA8C0;';
