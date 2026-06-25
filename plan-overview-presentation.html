@@ -43,11 +43,13 @@
     .page-wrapper { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
 
     /* ── PAGE HEADER ── */
-    .page-header { flex-shrink: 0; padding: 28px 40px 16px; background: #F8F9FA; border-bottom: 1px solid #DEE2E6; }
+    .page-header { flex-shrink: 0; padding: 28px 0 16px; background: #F8F9FA; border-bottom: 1px solid #DEE2E6; display: grid; grid-template-columns: 380px 680px 400px; justify-content: center; transition: grid-template-columns 0.35s cubic-bezier(0.4,0,0.2,1); }
+    .page-header.voyager-hidden { grid-template-columns: 380px 680px 0px; }
+    .page-header-inner { grid-column: 1 / 3; padding: 0 0 0 16px; }
     .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; font-family: var(--font-brand); }
 
     /* ── PAGE BODY: left rail | center | voyager ── */
-    .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 380px 1fr 400px; }
+    .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 380px 680px 400px; justify-content: center; }
 
     /* ── LEFT RAIL ── */
     .left-rail { overflow-y: auto; padding: 20px 16px 40px; background: #F8F9FA; }
@@ -216,7 +218,7 @@
     .voyager-sidebar { border-left: 1px solid #DEE2E6; display: flex; flex-direction: column; background: #ffffff; min-height: 0; overflow: hidden; transform: translateX(0); opacity: 1; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s cubic-bezier(0.4,0,0.2,1); }
     .voyager-sidebar.collapsed { transform: translateX(110%); opacity: 0; pointer-events: none; }
     .page-body { transition: grid-template-columns 0.35s cubic-bezier(0.4,0,0.2,1); }
-    .page-body.voyager-hidden { grid-template-columns: 380px 1fr 0px; }
+    .page-body.voyager-hidden { grid-template-columns: 380px 680px 0px; }
     .ask-zillow-fab { position: fixed; right: 16px; top: 60px; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 44px; height: 44px; background: #fff; border: 2px solid #6B21E8; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .ask-zillow-fab.visible { display: flex; }
     .voyager-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
@@ -263,7 +265,8 @@
     .abstract-btn.active { background: #212529; color: #ffffff; }
 
     /* ── PLAN TAB BAR ── */
-    .plan-tab-bar { flex-shrink: 0; padding: 0 40px; background: #F8F9FA; border-bottom: 1px solid #DEE2E6; display: flex; gap: 0; }
+    .plan-tab-bar { flex-shrink: 0; padding: 0; background: #F8F9FA; border-bottom: 1px solid #DEE2E6; display: grid; grid-template-columns: 380px 680px 400px; justify-content: center; }
+    .plan-tab-bar-inner { grid-column: 1 / 3; padding: 0 16px; display: flex; gap: 0; }
     .plan-tab { background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 20px; font-size: 14px; font-weight: 600; color: #6C757D; cursor: pointer; font-family: inherit; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
     .plan-tab:hover { color: #343A40; }
     .plan-tab.active { color: #000000; border-bottom-color: #000000; }
@@ -519,8 +522,10 @@
     <div class="page-wrapper">
 
       <!-- Page header -->
-      <div class="page-header">
-        <div class="page-title">Plan</div>
+      <div class="page-header voyager-hidden">
+        <div class="page-header-inner">
+          <div class="page-title">Plan</div>
+        </div>
       </div>
 
 
@@ -3536,18 +3541,21 @@
     function toggleVoyager() {
       var sidebar = document.getElementById('selling-voyager-sidebar');
       var body = document.getElementById('selling-page-body');
+      var header = document.querySelector('.page-header');
       var fab = document.getElementById('ask-zillow-fab');
       var isCollapsed = sidebar.classList.contains('collapsed');
       if (isCollapsed) {
         // Open: hide FAB, expand grid, slide panel in
         fab.classList.remove('visible');
         body.classList.remove('voyager-hidden');
+        if (header) header.classList.remove('voyager-hidden');
         sidebar.classList.remove('collapsed');
       } else {
         // Close: position and show FAB immediately so it appears to stay in place
         positionFab();
         fab.classList.add('visible');
         body.classList.add('voyager-hidden');
+        if (header) header.classList.add('voyager-hidden');
         sidebar.classList.add('collapsed');
       }
     }
